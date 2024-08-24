@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Recupera i dettagli della vacanza dal server
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}`);
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}`);
         if (!response.ok) {
             throw new Error('Errore nel recuperare i dettagli della vacanza');
         }
@@ -210,7 +210,7 @@ async function saveFlight(vacationId) {
     };
 
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}/flights`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -239,7 +239,7 @@ async function updateFlight(vacationId, flightId) {
     };
 
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}/flights/${flightId}`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights/${flightId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -261,7 +261,7 @@ async function updateFlight(vacationId, flightId) {
 
 async function deleteFlight(vacationId, flightId) {
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}/flights/${flightId}`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights/${flightId}`, {
             method: 'DELETE',
         });
 
@@ -286,7 +286,7 @@ async function saveHotel(vacationId) {
     };
 
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}/hotels`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -315,7 +315,7 @@ async function updateHotel(vacationId, hotelId) {
     };
 
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}/hotels/${hotelId}`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels/${hotelId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -337,7 +337,7 @@ async function updateHotel(vacationId, hotelId) {
 
 async function deleteHotel(vacationId, hotelId) {
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}/hotels/${hotelId}`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels/${hotelId}`, {
             method: 'DELETE',
         });
 
@@ -360,7 +360,7 @@ async function saveItinerary(vacationId) {
     };
 
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}/itinerary`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/itinerary`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -387,7 +387,7 @@ async function updateItinerary(vacationId, itineraryId) {
     };
 
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -409,7 +409,7 @@ async function updateItinerary(vacationId, itineraryId) {
 
 async function deleteItinerary(vacationId, itineraryId) {
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
             method: 'DELETE',
         });
 
