@@ -37,7 +37,7 @@ vacationForm.addEventListener('submit', async (e) => {
     if (isEditing) {
         // Logica per aggiornare la vacanza esistente
         try {
-            const updateResponse = await fetch(`http://localhost:5001/api/vacations/${editingVacationId}`, {
+            const updateResponse = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${editingVacationId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ vacationForm.addEventListener('submit', async (e) => {
         try {
             console.log('Form data:', { name, startDate, endDate });
 
-            const response = await fetch('http://localhost:5001/api/vacations', {
+            const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ vacationForm.addEventListener('submit', async (e) => {
 // Funzione per recuperare tutte le vacanze dal backend
 async function fetchVacations() {
     try {
-        const response = await fetch('http://localhost:5001/api/vacations');
+        const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations');
         if (!response.ok) {
             throw new Error('Errore nel recuperare le vacanze');
         }
@@ -144,7 +144,7 @@ function displayVacation(vacation) {
 // Funzione per eliminare una vacanza
 async function deleteVacation(id) {
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${id}`, {
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${id}`, {
             method: 'DELETE',
         });
 
@@ -164,7 +164,7 @@ async function editVacation(id) {
     console.log(`Edit button clicked for vacation with ID: ${id}`);
 
     try {
-        const response = await fetch(`http://localhost:5001/api/vacations/${id}`);
+        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${id}`);
         if (!response.ok) {
             throw new Error('Errore nel recuperare i dati della vacanza');
         }
