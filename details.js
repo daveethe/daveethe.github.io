@@ -71,21 +71,40 @@ function loadFlights(flights) {
     const flightList = document.getElementById('flightList');
     flightList.innerHTML = ''; // Pulisce la lista corrente
 
-    flights.forEach(flight => {
+    flights.forEach((flight, index) => {
         const flightItem = document.createElement('div');
-        flightItem.className = 'item';
+        flightItem.className = 'flight-item';
         flightItem.innerHTML = `
-            <p><strong>Airline:</strong> ${flight.airline}</p>
-            <p><strong>Flight Number:</strong> ${flight.flightNumber}</p>
-            <p><strong>Departure:</strong> ${new Date(flight.departureTime).toLocaleString()}</p>
-            <p><strong>Arrival:</strong> ${new Date(flight.arrivalTime).toLocaleString()}</p>
-            <div class="actions">
-                <button onclick="editFlight('${flight._id}')">✏️</button>
-                <button onclick="deleteFlight('${currentVacation._id}', '${flight._id}')">🗑️</button>
+            <div class="flight-header">
+                <span class="flight-index">${index + 1}</span>
+                <span class="flight-title">Partenza</span>
+                <span class="flight-title">Ritorno</span>
+            </div>
+            <div class="flight-content">
+                <div class="flight-detail">
+                    <p class="flight-date">${new Date(flight.departureTime).toLocaleString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' })}</p>
+                    <p class="flight-time">${new Date(flight.departureTime).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p class="flight-location">${flight.departureLocation}</p>
+                </div>
+                <div class="flight-duration">
+                    <p>${calculateFlightDuration(flight.departureTime, flight.arrivalTime)}</p>
+                    <p>${flight.flightNumber}</p>
+                </div>
+                <div class="flight-detail">
+                    <p class="flight-time">${new Date(flight.arrivalTime).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p class="flight-location">${flight.arrivalLocation}</p>
+                </div>
             </div>
         `;
         flightList.appendChild(flightItem);
     });
+}
+
+function calculateFlightDuration(departureTime, arrivalTime) {
+    const diff = new Date(arrivalTime) - new Date(departureTime);
+    const hours = Math.floor(diff / 1000 / 60 / 60);
+    const minutes = Math.floor((diff / 1000 / 60) % 60);
+    return `${hours} ore ${minutes} minuti`;
 }
 
 function loadHotels(hotels) {
