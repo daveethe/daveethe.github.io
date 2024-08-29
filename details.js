@@ -71,21 +71,48 @@ function loadFlights(flights) {
     const flightList = document.getElementById('flightList');
     flightList.innerHTML = ''; // Pulisce la lista corrente
 
-    flights.forEach(flight => {
+    flights.forEach((flight, index) => {
         const flightItem = document.createElement('div');
-        flightItem.className = 'item';
+        flightItem.className = 'flight-item';
+
+        // Template per il nuovo layout dei voli
         flightItem.innerHTML = `
-            <p><strong>Airline:</strong> ${flight.airline}</p>
-            <p><strong>Flight Number:</strong> ${flight.flightNumber}</p>
-            <p><strong>Departure:</strong> ${new Date(flight.departureTime).toLocaleString()}</p>
-            <p><strong>Arrival:</strong> ${new Date(flight.arrivalTime).toLocaleString()}</p>
-            <div class="actions">
-                <button onclick="editFlight('${flight._id}')">✏️</button>
-                <button onclick="deleteFlight('${currentVacation._id}', '${flight._id}')">🗑️</button>
+            <div class="flight-header">
+                <span>${index + 1}. Partenza</span>
+                <span>${new Date(flight.departureTime).toLocaleDateString()}</span>
+            </div>
+            <div class="flight-content">
+                <div class="flight-time">${new Date(flight.departureTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                <div class="flight-info">
+                    <p><strong>${flight.airline}</strong></p>
+                    <p>${flight.flightNumber}</p>
+                </div>
+                <div class="flight-duration">
+                    <span>${calculateDuration(flight.departureTime, flight.arrivalTime)}</span>
+                </div>
+                <div class="flight-time">${new Date(flight.arrivalTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+            </div>
+            <div class="flight-footer">
+                <div class="arrival-date">
+                    <span>${new Date(flight.arrivalTime).toLocaleDateString()}</span>
+                </div>
+                <div class="actions">
+                    <button onclick="editFlight('${flight._id}')">✏️</button>
+                    <button onclick="deleteFlight('${currentVacation._id}', '${flight._id}')">🗑️</button>
+                </div>
             </div>
         `;
         flightList.appendChild(flightItem);
     });
+}
+
+function calculateDuration(departureTime, arrivalTime) {
+    const departure = new Date(departureTime);
+    const arrival = new Date(arrivalTime);
+    const diff = new Date(arrival - departure);
+    const hours = diff.getUTCHours();
+    const minutes = diff.getUTCMinutes();
+    return `${hours} ore ${minutes} minuti`;
 }
 
 function loadHotels(hotels) {
@@ -94,15 +121,21 @@ function loadHotels(hotels) {
 
     hotels.forEach(hotel => {
         const hotelItem = document.createElement('div');
-        hotelItem.className = 'item';
+        hotelItem.className = 'hotel-item';
         hotelItem.innerHTML = `
-            <p><strong>Name:</strong> ${hotel.name}</p>
-            <p><strong>Address:</strong> ${hotel.address}</p>
-            <p><strong>Check-in:</strong> ${new Date(hotel.checkInDate).toLocaleDateString()}</p>
-            <p><strong>Check-out:</strong> ${new Date(hotel.checkOutDate).toLocaleDateString()}</p>
-            <div class="actions">
-                <button onclick="editHotel('${hotel._id}')">✏️</button>
-                <button onclick="deleteHotel('${currentVacation._id}', '${hotel._id}')">🗑️</button>
+            <div class="hotel-content">
+                <div class="hotel-info">
+                    <p><strong>${hotel.name}</strong></p>
+                    <p>${hotel.address}</p>
+                </div>
+                <div class="hotel-dates">
+                    <p><strong>Check-in:</strong> ${new Date(hotel.checkInDate).toLocaleDateString()}</p>
+                    <p><strong>Check-out:</strong> ${new Date(hotel.checkOutDate).toLocaleDateString()}</p>
+                </div>
+                <div class="actions">
+                    <button onclick="editHotel('${hotel._id}')">✏️</button>
+                    <button onclick="deleteHotel('${currentVacation._id}', '${hotel._id}')">🗑️</button>
+                </div>
             </div>
         `;
         hotelList.appendChild(hotelItem);
@@ -115,13 +148,18 @@ function loadItinerary(itinerary) {
 
     itinerary.forEach(day => {
         const itineraryItem = document.createElement('div');
-        itineraryItem.className = 'item';
+        itineraryItem.className = 'itinerary-item';
         itineraryItem.innerHTML = `
-            <p><strong>Date:</strong> ${new Date(day.date).toLocaleDateString()}</p>
-            <p><strong>Activities:</strong> ${day.activities.join(', ')}</p>
-            <div class="actions">
-                <button onclick="editItinerary('${day._id}')">✏️</button>
-                <button onclick="deleteItinerary('${currentVacation._id}', '${day._id}')">🗑️</button>
+            <div class="itinerary-content">
+                <p><strong>Date:</strong> ${new Date(day.date).toLocaleDateString()}</p>
+                <p><strong>Activities:</strong></p>
+                <ul>
+                    ${day.activities.map(activity => `<li>${activity}</li>`).join('')}
+                </ul>
+                <div class="actions">
+                    <button onclick="editItinerary('${day._id}')">✏️</button>
+                    <button onclick="deleteItinerary('${currentVacation._id}', '${day._id}')">🗑️</button>
+                </div>
             </div>
         `;
         itineraryList.appendChild(itineraryItem);
@@ -129,10 +167,10 @@ function loadItinerary(itinerary) {
 }
 
 function openModal(modalId, mode, data = {}) {
-    const formId = `${modalId.split('Modal')[0]}Form`; // Assicurati che l'ID del form sia corretto
+    const formId = `${modalId.split('Modal')[0]}Form`; // Assicura che l'ID del form sia corretto
     const formElement = document.getElementById(formId);
 
-    // Verifica che il form esista
+    // Verifica che il modalId e il formId esistano nel DOM
     if (!formElement) {
         console.error(`Form element with ID ${formId} not found.`);
         return;
@@ -146,31 +184,17 @@ function openModal(modalId, mode, data = {}) {
 
     if (mode === 'add') {
         modalTitleElement.innerText = `Add ${modalId.split('Modal')[0]}`;
-        formElement.reset(); // Resetta il form solo se esiste
-        const hiddenInput = document.getElementById(`${modalId.split('Modal')[0]}Id`);
-        if (hiddenInput) {
-            hiddenInput.value = ''; // Clear hidden input for new data
-        } else {
-            console.error(`Hidden input element with ID ${modalId.split('Modal')[0]}Id not found.`);
-        }
+        formElement.reset();
+        document.getElementById(`${modalId.split('Modal')[0]}Id`).value = ''; // Clear hidden input for new data
     } else if (mode === 'edit') {
         modalTitleElement.innerText = `Edit ${modalId.split('Modal')[0]}`;
         Object.keys(data).forEach(key => {
-            const inputElement = document.getElementById(key);
-            if (inputElement) {
-                inputElement.value = data[key];
-            } else {
-                console.warn(`Input element with ID ${key} not found.`);
+            if (document.getElementById(key)) {
+                document.getElementById(key).value = data[key];
             }
         });
-        const hiddenInput = document.getElementById(`${modalId.split('Modal')[0]}Id`);
-        if (hiddenInput) {
-            hiddenInput.value = data._id; // Set hidden input for editing
-        } else {
-            console.error(`Hidden input element with ID ${modalId.split('Modal')[0]}Id not found.`);
-        }
+        document.getElementById(`${modalId.split('Modal')[0]}Id`).value = data._id; // Set hidden input for editing
     }
-
     document.getElementById(modalId).style.display = 'block';
 }
 
