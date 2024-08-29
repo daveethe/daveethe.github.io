@@ -40,22 +40,6 @@ h1 {
     color: #007bff;
 }
 
-/* Stile per il pulsante "Add Vacation" */
-#addVacationBtn {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#addVacationBtn:hover {
-    background-color: #0056b3;
-}
-
 /* Layout a griglia per la lista delle vacanze */
 #vacationList {
     display: grid;
@@ -309,4 +293,160 @@ h1 {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 15px;
     }
+}
+
+
+/* Aggiungi nuove classi CSS per il nuovo layout dei voli */
+
+.flight-item, .hotel-item, .itinerary-item {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+
+.flight-item:hover, .hotel-item:hover, .itinerary-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.flight-header,
+.flight-footer,
+.hotel-content,
+.itinerary-content {
+    justify-content: space-between;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.flight-content, .hotel-content, .itinerary-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.flight-time, .itinerary-content p {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+}
+
+.hotel-dates {
+    color: #333;
+}
+
+.flight-info p, .hotel-info p, .itinerary-content p {
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.flight-duration, .hotel-dates p, .itinerary-content p {
+    font-size: 0.9em;
+    color: #777;
+}
+
+.flight-item .actions, .hotel-item .actions, .itinerary-item .actions {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.flight-item:hover .actions, .hotel-item:hover .actions, .itinerary-item:hover .actions {
+    display: flex;
+    gap: 10px;
+}
+
+.flight-item .actions button, .hotel-item .actions button, .itinerary-item .actions button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: color 0.2s;
+}
+
+.flight-item .actions button:hover, .hotel-item .actions button:hover, .itinerary-item .actions button:hover {
+    color: #007bff;
+}
+
+/* Stile per il pulsante "Back to Home" */
+.btn-back {
+    position: absolute;
+    right: 20px;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.arrival-date {
+    text-align: right;
+}
+
+#addVacationBtn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Stili per la pagina di login */
+
+.container-login {
+    max-width: 400px; /* Riduci la larghezza per la pagina di login */
+    margin: 10% auto; /* Centra verticalmente e orizzontalmente */
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    transition: border-color 0.2s ease;
+    margin-bottom: 10px;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+}
+
+.btn-save {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-save:hover {
+    background-color: #0056b3;
 }
