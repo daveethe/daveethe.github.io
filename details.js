@@ -1,12 +1,15 @@
 let currentVacation = null; // Definizione globale
 
+let isRedirecting = false;
+
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const vacationId = urlParams.get('id');
 
-    if (!vacationId) {
+    if (!vacationId && !isRedirecting) {
+        isRedirecting = true; // Setta lo stato per evitare reindirizzamenti multipli
         alert('No vacation selected');
-        window.location.href = 'index.html'; // Ritorna alla homepage se non c'è ID
+        window.location.href = 'index.html';
         return;
     }
 
@@ -25,6 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadItinerary(currentVacation.itinerary);
     } catch (error) {
         console.error('Errore:', error.message);
+        // Assicurati che errori gestiti non causino un reindirizzamento non necessario
     }
 
     // Aggiungi i gestori di eventi per i pulsanti
