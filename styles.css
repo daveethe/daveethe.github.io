@@ -313,16 +313,21 @@ h1 {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.flight-header,
 .flight-footer,
-.hotel-content,
-.itinerary-content {
+.flight-header {
     justify-content: space-between;
-    font-size: 0.9em;
+    font-size: 0.7em;
     color: #555;
 }
 
-.flight-content, .hotel-content, .itinerary-content {
+.hotel-content,
+.itinerary-content {
+    justify-content: space-between;
+    font-size: 0.8em;
+    color: #555;
+}
+
+.flight-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -330,22 +335,39 @@ h1 {
 }
 
 .flight-time, .itinerary-content p {
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: bold;
     color: #333;
 }
 
 .hotel-dates {
     color: #333;
+    padding: 10px 0px 0px
 }
 
-.flight-info p, .hotel-info p, .itinerary-content p {
+.flight-info p {
     margin: 0;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
-.flight-duration, .hotel-dates p, .itinerary-content p {
+.hotel-info p {
+    margin: 0;
+    font-size: 1em;
+}
+
+.hotel-dates div {
     font-size: 0.9em;
+    color: #777;
+    padding: 0px 0px 3px;
+}
+
+.flight-duration {
+    font-size: 0.8em;
+    color: #777;
+}
+
+.itinerary-content p {
+    font-size: 1em;
     color: #777;
 }
 
@@ -450,3 +472,11 @@ h1 {
 .btn-save:hover {
     background-color: #0056b3;
 }
+
+/* Stile per il div della mappa */
+#map {
+    width: 100%;  /* Assicura che la mappa prenda tutta la larghezza */
+    height: 400px;  /* Altezza fissa per garantire una buona visualizzazione */
+    min-height: 400px; /* Altezza minima per evitare la visualizzazione incompleta */
+}
+
