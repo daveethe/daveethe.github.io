@@ -1,4 +1,5 @@
 let currentVacation = null; // Definizione globale
+let map; // Variabile globale per la mappa
 
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('addFlightBtn').addEventListener('click', () => openModal('flightModal', 'add'));
     document.getElementById('addHotelBtn').addEventListener('click', () => openModal('hotelModal', 'add'));
     document.getElementById('addItineraryBtn').addEventListener('click', () => openModal('itineraryModal', 'add'));
+    document.getElementById('openMapBtn').addEventListener('click', () => openModal('mapModal', 'viewMap'));
 
     // Gestori di eventi per il submit dei moduli
     document.getElementById('flightForm').addEventListener('submit', async (e) => {
@@ -75,11 +77,11 @@ function loadFlights(flights) {
         const flightItem = document.createElement('div');
         flightItem.className = 'flight-item';
 
-        // Template per il nuovo layout dei voli
+        // Template aggiornato per il layout dei voli
         flightItem.innerHTML = `
             <div class="flight-header">
-                <span>${index + 1}. Partenza</span>
-                <span>${new Date(flight.departureTime).toLocaleDateString()}</span>
+                <span><strong>From:</strong> ${flight.departureAirport || 'N/A'}</span><br>
+                <span><strong>To:</strong> ${flight.arrivalAirport || 'N/A'}</span>
             </div>
             <div class="flight-content">
                 <div class="flight-time">${new Date(flight.departureTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
@@ -129,8 +131,8 @@ function loadHotels(hotels) {
                     <p>${hotel.address}</p>
                 </div>
                 <div class="hotel-dates">
-                    <p><strong>Check-in:</strong> ${new Date(hotel.checkInDate).toLocaleDateString()}</p>
-                    <p><strong>Check-out:</strong> ${new Date(hotel.checkOutDate).toLocaleDateString()}</p>
+                    <div><strong>Check-in:</strong> ${new Date(hotel.checkInDate).toLocaleDateString()}</div>
+                    <div><strong>Check-out:</strong> ${new Date(hotel.checkOutDate).toLocaleDateString()}</div>
                 </div>
                 <div class="actions">
                     <button onclick="editHotel('${hotel._id}')">✏️</button>
@@ -151,8 +153,7 @@ function loadItinerary(itinerary) {
         itineraryItem.className = 'itinerary-item';
         itineraryItem.innerHTML = `
             <div class="itinerary-content">
-                <p><strong>Date:</strong> ${new Date(day.date).toLocaleDateString()}</p>
-                <p><strong>Activities:</strong></p>
+                <p>${new Date(day.date).toLocaleDateString()}</p>
                 <ul>
                     ${day.activities.map(activity => `<li>${activity}</li>`).join('')}
                 </ul>
@@ -171,13 +172,13 @@ function openModal(modalId, mode, data = {}) {
     const formElement = document.getElementById(formId);
 
     // Verifica che il modalId e il formId esistano nel DOM
-    if (!formElement) {
+    if (!formElement && modalId !== 'mapModal') { // Aggiunto per escludere la mappa
         console.error(`Form element with ID ${formId} not found.`);
         return;
     }
 
     const modalTitleElement = document.getElementById(`${modalId}Title`);
-    if (!modalTitleElement) {
+    if (!modalTitleElement && modalId !== 'mapModal') { // Aggiunto per escludere la mappa
         console.error(`Modal title element with ID ${modalId}Title not found.`);
         return;
     }
@@ -194,9 +195,89 @@ function openModal(modalId, mode, data = {}) {
             }
         });
         document.getElementById(`${modalId.split('Modal')[0]}Id`).value = data._id; // Set hidden input for editing
+    } else if (mode === 'viewMap') { // Aggiunto per la mappa
+        initializeMap(); // Inizializza la mappa
     }
+
     document.getElementById(modalId).style.display = 'block';
+
+    if (modalId === 'mapModal') {
+        setTimeout(() => {
+            if (map) {
+                map.invalidateSize(); // Assicura che le dimensioni della mappa siano corrette dopo il rendering
+            }
+        }, 100); // Breve ritardo per garantire che il rendering sia completato
+    }
 }
+
+
+function initializeMap() {
+    // Inizializza la mappa e assegna alla variabile globale 'map'
+    map = L.map('map').setView([0, 0], 2); // Coordinata iniziale globale
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    addMarkers(map); // Aggiungi marker per voli, hotel e itinerari
+}
+
+
+function addMarkers(map) {
+    if (currentVacation) {
+        currentVacation.flights.forEach(flight => {
+            // Aggiungi marker per l'aeroporto di partenza
+            getCoordinates(flight.departureAirport).then(coords => {
+                if (coords) {
+                    L.marker(coords).addTo(map).bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Departure: ${flight.departureAirport}`);
+                }
+            });
+
+            // Aggiungi marker per l'aeroporto di arrivo
+            getCoordinates(flight.arrivalAirport).then(coords => {
+                if (coords) {
+                    L.marker(coords).addTo(map).bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Arrival: ${flight.arrivalAirport}`);
+                }
+            });
+        });
+
+        currentVacation.hotels.forEach(hotel => {
+            getCoordinates(hotel.address).then(coords => {
+                if (coords) {
+                    L.marker(coords).addTo(map).bindPopup(`<b>${hotel.name}</b><br>${hotel.address}`);
+                }
+            });
+        });
+
+        currentVacation.itinerary.forEach(day => {
+            day.activities.forEach(activity => {
+                // Logica per aggiungere marker per gli itinerari se le attività includono informazioni di posizione
+            });
+        });
+    }
+}
+
+
+
+
+async function getCoordinates(address) {
+    try {
+        console.log(`Fetching coordinates for: ${address}`);
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+        const data = await response.json();
+        if (data && data.length > 0) {
+            console.log(`Coordinates found: ${data[0].lat}, ${data[0].lon}`);
+            return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        } else {
+            console.warn(`No coordinates found for: ${address}`);
+        }
+    } catch (error) {
+        console.error('Error fetching coordinates:', error);
+    }
+    return null;
+}
+
 
 function editFlight(flightId) {
     const flight = currentVacation.flights.find(f => f._id === flightId);
@@ -229,9 +310,13 @@ async function saveFlight(vacationId) {
     const flightData = {
         airline: document.getElementById('airline').value,
         flightNumber: document.getElementById('flightNumber').value,
+        departureAirport: document.getElementById('departureAirport').value.trim(),
+        arrivalAirport: document.getElementById('arrivalAirport').value.trim(),
         departureTime: document.getElementById('departureTime').value,
         arrivalTime: document.getElementById('arrivalTime').value
     };
+
+    console.log('Saving flight with data:', flightData);  // Debugging
 
     try {
         const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights`, {
@@ -247,7 +332,7 @@ async function saveFlight(vacationId) {
         }
 
         const updatedVacation = await response.json();
-        currentVacation = updatedVacation; // Aggiorna currentVacation con i dati aggiornati
+        currentVacation = updatedVacation;
         loadFlights(updatedVacation.flights);
     } catch (error) {
         console.error('Errore nel salvataggio del volo:', error.message);
@@ -258,9 +343,13 @@ async function updateFlight(vacationId, flightId) {
     const flightData = {
         airline: document.getElementById('airline').value,
         flightNumber: document.getElementById('flightNumber').value,
+        departureAirport: document.getElementById('departureAirport').value.trim(),
+        arrivalAirport: document.getElementById('arrivalAirport').value.trim(),
         departureTime: document.getElementById('departureTime').value,
         arrivalTime: document.getElementById('arrivalTime').value
     };
+
+    console.log('Updating flight with data:', flightData);  // Debugging
 
     try {
         const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights/${flightId}`, {
@@ -276,7 +365,7 @@ async function updateFlight(vacationId, flightId) {
         }
 
         const updatedVacation = await response.json();
-        currentVacation = updatedVacation; // Aggiorna currentVacation con i dati aggiornati
+        currentVacation = updatedVacation;
         loadFlights(updatedVacation.flights);
     } catch (error) {
         console.error('Errore nell\'aggiornamento del volo:', error.message);
