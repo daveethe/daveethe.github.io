@@ -484,3 +484,41 @@ h1 {
     font-size: 0.9em;
     color: #777;
 }
+
+/* Posizionamento dell'icona del calendario */
+.calendar-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+/* Overlay per il calendario */
+.calendar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-trasparente per oscurare il contenuto */
+    backdrop-filter: blur(5px); /* Effetto blur */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Portalo in primo piano */
+}
+
+/* Container del calendario */
+.calendar-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px; /* Dimensione del calendario */
+}
+
+/* Effetto hover per l'icona del calendario */
+.calendar-icon:hover {
+    cursor: pointer;
+    color: #007bff;
+}
