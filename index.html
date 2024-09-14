@@ -6,13 +6,28 @@
     <title>Vacation Planner</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
     <div class="container">
         <h1>Vacation Planner</h1>
         <button id="addVacationBtn">+ Add Vacation</button>
         <div id="vacationList"></div>
+        <!-- Aggiungi l'icona del calendario in alto a destra -->
+        <div class="calendar-icon" style="position: absolute; top: 20px; right: 20px;">
+            <i id="calendarButton" class="fas fa-calendar-alt" style="font-size: 24px; cursor: pointer;"></i>
+        </div>
     </div>
+
+    <!-- Overlay per il calendario -->
+    <div id="calendarOverlay" class="calendar-overlay" style="display: none;">
+        <div id="vacationCalendar" class="calendar-container">
+            <input id="calendarInput" class="calendar" />
+        </div>
+    </div>
+
 
     <!-- Popup Modale -->
     <div id="vacationModal" class="modal">
