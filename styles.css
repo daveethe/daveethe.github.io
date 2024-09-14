@@ -480,3 +480,7 @@ h1 {
     min-height: 400px; /* Altezza minima per evitare la visualizzazione incompleta */
 }
 
+.itinerary-content div {
+    font-size: 0.9em;
+    color: #777;
+}
