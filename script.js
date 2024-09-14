@@ -25,7 +25,6 @@ closeModal.addEventListener('click', () => {
     }, 300);  // 300 millisecondi di ritardo per l'animazione di chiusura
 });
 
-
 // Gestisce il submit del modulo
 vacationForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -186,3 +185,75 @@ async function editVacation(id) {
 
 // Carica tutte le vacanze all'avvio
 fetchVacations();
+
+// Seleziona l'icona del calendario e il div che contiene il calendario
+const calendarButton = document.getElementById('calendarButton');
+const calendarOverlay = document.getElementById('calendarOverlay');
+
+// Aggiungi l'evento di click all'icona per visualizzare/nascondere il calendario
+calendarButton.addEventListener('click', () => {
+    calendarOverlay.style.display = 'flex'; // Mostra l'overlay e il calendario
+});
+
+// Nascondi il calendario quando l'utente clicca fuori dal calendario o preme ESC
+calendarOverlay.addEventListener('click', (event) => {
+    if (event.target === calendarOverlay) {
+        calendarOverlay.style.display = 'none'; // Nasconde il calendario
+    }
+});
+
+// Nascondi il calendario se l'utente preme il tasto "ESC"
+document.addEventListener('keydown', (event) => {
+    if (event.key === "Escape") {
+        calendarOverlay.style.display = 'none'; // Nasconde il calendario
+    }
+});
+
+// Funzione per ottenere le vacanze dal server
+async function fetchVacationsForCalendar() {
+    try {
+        const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations');
+        const vacations = await response.json();
+
+        // Estrai le date delle vacanze
+        const vacationDates = vacations.map(vacation => {
+            return {
+                start: new Date(vacation.startDate).setHours(0, 0, 0, 0), // Imposta l'ora a mezzanotte
+                end: new Date(vacation.endDate).setHours(23, 59, 59, 999) // Imposta la fine del giorno
+            };
+        });
+
+        // Inizializza il calendario flatpickr con le date delle vacanze evidenziate
+        flatpickr('#calendarInput', {
+            inline: true, // Mostra il calendario sempre aperto
+            mode: 'range', // Permette di selezionare intervalli di date
+            disable: vacationDates.map(v => ({ 
+                from: new Date(v.start), 
+                to: new Date(v.end)
+            })),
+            enable: vacationDates.map(v => ({ 
+                from: new Date(v.start), 
+                to: new Date(v.end)
+            })),
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                // Colora i giorni delle vacanze
+                const date = new Date(dayElem.dateObj).setHours(0, 0, 0, 0); // Imposta l'ora a mezzanotte
+                const inVacation = vacationDates.some(v => {
+                    const start = v.start;
+                    const end = v.end;
+                    return date >= start && date <= end;
+                });
+
+                if (inVacation) {
+                    dayElem.style.backgroundColor = '#FFDD57'; // Colore per i giorni di vacanza
+                    dayElem.style.color = 'white';
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Errore nel recupero delle vacanze:', error);
+    }
+}
+
+// Recupera le vacanze e configura il calendario al caricamento della pagina
+fetchVacationsForCalendar();
