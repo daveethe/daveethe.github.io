@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Icone personalizzate per i marker
 const flightIcon = L.icon({
-    iconUrl: 'https://i.imgur.com/HYbGEZa.png', // URL dell'icona dell'aereo
+    iconUrl: 'https://i.imgur.com/DWgnf9r.png', // URL dell'icona dell'aereo
     iconSize: [24, 24], // Dimensione dell'icona
     iconAnchor: [12, 24], // Punto di ancoraggio dell'icona
     popupAnchor: [0, -24], // Punto di ancoraggio del popup rispetto all'icona
