@@ -270,50 +270,77 @@ function initializeMap() {
 
 function addMarkers(map) {
     if (currentVacation) {
+        let dayGroups = {};  // Memorizza i marker per ogni giorno
+
+        // Funzione per generare un colore casuale
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Aggiungi marker per i voli (partenza e arrivo)
         currentVacation.flights.forEach(flight => {
-            // Aggiungi marker per l'aeroporto di partenza
             getCoordinates(flight.departureAirport).then(coords => {
                 if (coords) {
-                    L.marker(coords, { icon: flightIcon }) // Usa l'icona dell'aereo
+                    L.marker(coords, { icon: flightIcon })
                         .addTo(map)
                         .bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Departure: ${flight.departureAirport}`);
                 }
             });
 
-            // Aggiungi marker per l'aeroporto di arrivo
             getCoordinates(flight.arrivalAirport).then(coords => {
                 if (coords) {
-                    L.marker(coords, { icon: flightIcon }) // Usa l'icona dell'aereo
+                    L.marker(coords, { icon: flightIcon })
                         .addTo(map)
                         .bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Arrival: ${flight.arrivalAirport}`);
                 }
             });
         });
 
+        // Aggiungi marker per gli hotel
         currentVacation.hotels.forEach(hotel => {
             getCoordinates(hotel.address).then(coords => {
                 if (coords) {
-                    L.marker(coords, { icon: hotelIcon }) // Usa l'icona dell'hotel
+                    L.marker(coords, { icon: hotelIcon })
                         .addTo(map)
                         .bindPopup(`<b>${hotel.name}</b><br>${hotel.address}`);
                 }
             });
         });
 
-        // Aggiungi marker per l'itinerario
+        // Aggiungi marker e linee per l'itinerario
         currentVacation.itinerary.forEach(day => {
             if (day.coordinates) {
                 const { lat, lng } = day.coordinates;
-                L.marker([lat, lng], { icon: itineraryIcon }) // Usa l'icona del segnale di posizione
+                const marker = L.marker([lat, lng], { icon: itineraryIcon })
                     .addTo(map)
                     .bindPopup(`<b>Itinerary:</b><br>${day.activities.join(', ')}`);
+
+                // Raggruppa i marker per giorno
+                const dayKey = day.date.split('T')[0]; // Usa solo la parte della data senza l'orario
+                if (!dayGroups[dayKey]) {
+                    dayGroups[dayKey] = {
+                        markers: [],
+                        color: getRandomColor()  // Colore diverso per ogni giorno
+                    };
+                }
+                dayGroups[dayKey].markers.push([lat, lng]);
+            }
+        });
+
+        // Collega i marker dello stesso giorno con una linea
+        Object.keys(dayGroups).forEach(day => {
+            const group = dayGroups[day];
+            if (group.markers.length > 1) {
+                L.polyline(group.markers, { color: group.color }).addTo(map);
             }
         });
     }
 }
-
-
-
 
 async function getCoordinates(address) {
     try {
