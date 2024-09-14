@@ -123,18 +123,28 @@
             <h2 id="itineraryModalTitle">Add Itinerary</h2>
             <form id="itineraryForm">
                 <input type="hidden" id="itineraryId"> <!-- Hidden input per ID itinerario -->
+                
+                <!-- Hidden inputs per le coordinate -->
+                <input type="hidden" id="lat" name="lat">
+                <input type="hidden" id="lng" name="lng">
+                
                 <div class="form-group">
                     <label for="itineraryDate">Date:</label>
                     <input type="date" id="itineraryDate" name="itineraryDate" required>
                 </div>
                 <div class="form-group">
-                    <label for="activities">Activities:</label>
+                    <label for="itineraryTime">Time:</label> <!-- Nuovo campo per l'orario -->
+                    <input type="time" id="itineraryTime" name="itineraryTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="activities">Description:</label>
                     <textarea id="activities" name="activities" rows="4" required></textarea>
                 </div>
                 <button type="submit" class="btn-save">Save Itinerary</button>
-            </form>
+            </form>            
         </div>
     </div>
+
 
     <script>
         // Controlla se l'utente è autenticato
