@@ -78,10 +78,10 @@ const flightIcon = L.icon({
 });
 
 const hotelIcon = L.icon({
-    iconUrl: 'https://i.imgur.com/cWwtnHF.png', // URL dell'icona dell'hotel
-    iconSize: [16, 16],
-    iconAnchor: [8, 16],
-    popupAnchor: [0, -16],
+    iconUrl: 'https://i.imgur.com/XqkbOmY.png', // URL dell'icona dell'hotel
+    iconSize: [20, 20],
+    iconAnchor: [10, 20],
+    popupAnchor: [0, -20],
 });
 
 const itineraryIcon = L.icon({
