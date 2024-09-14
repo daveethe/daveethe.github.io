@@ -86,9 +86,9 @@ const hotelIcon = L.icon({
 
 const itineraryIcon = L.icon({
     iconUrl: 'https://i.imgur.com/ID8m0FI.png', // URL dell'icona del segnale di posizione
-    iconSize: [24, 24], // Dimensione dell'icona
-    iconAnchor: [12, 24], // Punto di ancoraggio dell'icona
-    popupAnchor: [0, -24], // Punto di ancoraggio del popup rispetto all'icona
+    iconSize: [32, 32], // Dimensione dell'icona
+    iconAnchor: [16, 32], // Punto di ancoraggio dell'icona
+    popupAnchor: [0, -32], // Punto di ancoraggio del popup rispetto all'icona
 });
 
 
