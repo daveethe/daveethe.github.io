@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Recupera i dettagli della vacanza dal server
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}`);
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}`);
         if (!response.ok) {
             throw new Error('Errore nel recuperare i dettagli della vacanza');
         }
@@ -68,6 +68,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         closeModal('itineraryModal');
     });
 });
+
+// Icone personalizzate per i marker
+const flightIcon = L.icon({
+    iconUrl: 'https://i.imgur.com/HYbGEZa.png', // URL dell'icona dell'aereo
+    iconSize: [24, 24], // Dimensione dell'icona
+    iconAnchor: [12, 24], // Punto di ancoraggio dell'icona
+    popupAnchor: [0, -24], // Punto di ancoraggio del popup rispetto all'icona
+});
+
+const hotelIcon = L.icon({
+    iconUrl: 'https://i.imgur.com/cWwtnHF.png', // URL dell'icona dell'hotel
+    iconSize: [16, 16],
+    iconAnchor: [8, 16],
+    popupAnchor: [0, -16],
+});
+
+const itineraryIcon = L.icon({
+    iconUrl: 'https://i.imgur.com/ID8m0FI.png', // URL dell'icona del segnale di posizione
+    iconSize: [24, 24], // Dimensione dell'icona
+    iconAnchor: [12, 24], // Punto di ancoraggio dell'icona
+    popupAnchor: [0, -24], // Punto di ancoraggio del popup rispetto all'icona
+});
+
 
 function loadFlights(flights) {
     const flightList = document.getElementById('flightList');
@@ -148,15 +171,24 @@ function loadItinerary(itinerary) {
     const itineraryList = document.getElementById('itineraryList');
     itineraryList.innerHTML = ''; // Pulisce la lista corrente
 
+    // Ordina l'itinerario per data e ora (gestisci anche l'orario se presente)
+    itinerary.sort((a, b) => {
+        const dateA = new Date(a.date + ' ' + (a.time || '00:00')); // Se non c'è un'ora, usa mezzanotte
+        const dateB = new Date(b.date + ' ' + (b.time || '00:00'));
+        return dateA - dateB; // Ordine crescente
+    });
+
+    // Genera l'HTML per ogni giorno dell'itinerario
     itinerary.forEach(day => {
         const itineraryItem = document.createElement('div');
         itineraryItem.className = 'itinerary-item';
         itineraryItem.innerHTML = `
             <div class="itinerary-content">
-                <p>${new Date(day.date).toLocaleDateString()}</p>
+                <div><strong>Date:</strong> ${new Date(day.date).toLocaleDateString()} <strong>- Time:</strong> ${day.time || ''}</div>
                 <ul>
                     ${day.activities.map(activity => `<li>${activity}</li>`).join('')}
                 </ul>
+                <div>Location: ${day.coordinates ? `(${day.coordinates.lat}, ${day.coordinates.lng})` : 'N/A'}</div>
                 <div class="actions">
                     <button onclick="editItinerary('${day._id}')">✏️</button>
                     <button onclick="deleteItinerary('${currentVacation._id}', '${day._id}')">🗑️</button>
@@ -166,6 +198,7 @@ function loadItinerary(itinerary) {
         itineraryList.appendChild(itineraryItem);
     });
 }
+
 
 function openModal(modalId, mode, data = {}) {
     const formId = `${modalId.split('Modal')[0]}Form`; // Assicura che l'ID del form sia corretto
@@ -187,6 +220,10 @@ function openModal(modalId, mode, data = {}) {
         modalTitleElement.innerText = `Add ${modalId.split('Modal')[0]}`;
         formElement.reset();
         document.getElementById(`${modalId.split('Modal')[0]}Id`).value = ''; // Clear hidden input for new data
+        
+        // Aggiungi qui le coordinate se disponibili
+        document.getElementById('lat').value = data.lat || ''; // Imposta le coordinate lat
+        document.getElementById('lng').value = data.lng || ''; // Imposta le coordinate lng
     } else if (mode === 'edit') {
         modalTitleElement.innerText = `Edit ${modalId.split('Modal')[0]}`;
         Object.keys(data).forEach(key => {
@@ -211,16 +248,23 @@ function openModal(modalId, mode, data = {}) {
 }
 
 
+
 function initializeMap() {
-    // Inizializza la mappa e assegna alla variabile globale 'map'
-    map = L.map('map').setView([0, 0], 2); // Coordinata iniziale globale
+    map = L.map('map').setView([0, 0], 2); // Inizializza la mappa
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    addMarkers(map); // Aggiungi marker per voli, hotel e itinerari
+    addMarkers(map); // Aggiungi i marker esistenti (voli, hotel, ecc.)
+
+    // Aggiungi un listener per il clic sulla mappa
+    map.on('click', function (e) {
+        const { lat, lng } = e.latlng;
+        // Apri il modale e passa le coordinate cliccate
+        openModal('itineraryModal', 'add', { lat, lng });
+    });
 }
 
 
@@ -230,14 +274,18 @@ function addMarkers(map) {
             // Aggiungi marker per l'aeroporto di partenza
             getCoordinates(flight.departureAirport).then(coords => {
                 if (coords) {
-                    L.marker(coords).addTo(map).bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Departure: ${flight.departureAirport}`);
+                    L.marker(coords, { icon: flightIcon }) // Usa l'icona dell'aereo
+                        .addTo(map)
+                        .bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Departure: ${flight.departureAirport}`);
                 }
             });
 
             // Aggiungi marker per l'aeroporto di arrivo
             getCoordinates(flight.arrivalAirport).then(coords => {
                 if (coords) {
-                    L.marker(coords).addTo(map).bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Arrival: ${flight.arrivalAirport}`);
+                    L.marker(coords, { icon: flightIcon }) // Usa l'icona dell'aereo
+                        .addTo(map)
+                        .bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Arrival: ${flight.arrivalAirport}`);
                 }
             });
         });
@@ -245,15 +293,21 @@ function addMarkers(map) {
         currentVacation.hotels.forEach(hotel => {
             getCoordinates(hotel.address).then(coords => {
                 if (coords) {
-                    L.marker(coords).addTo(map).bindPopup(`<b>${hotel.name}</b><br>${hotel.address}`);
+                    L.marker(coords, { icon: hotelIcon }) // Usa l'icona dell'hotel
+                        .addTo(map)
+                        .bindPopup(`<b>${hotel.name}</b><br>${hotel.address}`);
                 }
             });
         });
 
+        // Aggiungi marker per l'itinerario
         currentVacation.itinerary.forEach(day => {
-            day.activities.forEach(activity => {
-                // Logica per aggiungere marker per gli itinerari se le attività includono informazioni di posizione
-            });
+            if (day.coordinates) {
+                const { lat, lng } = day.coordinates;
+                L.marker([lat, lng], { icon: itineraryIcon }) // Usa l'icona del segnale di posizione
+                    .addTo(map)
+                    .bindPopup(`<b>Itinerary:</b><br>${day.activities.join(', ')}`);
+            }
         });
     }
 }
@@ -319,7 +373,7 @@ async function saveFlight(vacationId) {
     console.log('Saving flight with data:', flightData);  // Debugging
 
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights`, {
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/flights`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -352,7 +406,7 @@ async function updateFlight(vacationId, flightId) {
     console.log('Updating flight with data:', flightData);  // Debugging
 
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights/${flightId}`, {
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/flights/${flightId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -374,7 +428,7 @@ async function updateFlight(vacationId, flightId) {
 
 async function deleteFlight(vacationId, flightId) {
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights/${flightId}`, {
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/flights/${flightId}`, {
             method: 'DELETE',
         });
 
@@ -399,7 +453,7 @@ async function saveHotel(vacationId) {
     };
 
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels`, {
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/hotels`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -428,7 +482,7 @@ async function updateHotel(vacationId, hotelId) {
     };
 
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels/${hotelId}`, {
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/hotels/${hotelId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -450,7 +504,7 @@ async function updateHotel(vacationId, hotelId) {
 
 async function deleteHotel(vacationId, hotelId) {
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels/${hotelId}`, {
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/hotels/${hotelId}`, {
             method: 'DELETE',
         });
 
@@ -469,11 +523,17 @@ async function deleteHotel(vacationId, hotelId) {
 async function saveItinerary(vacationId) {
     const itineraryData = {
         date: document.getElementById('itineraryDate').value,
-        activities: document.getElementById('activities').value.split('\n')
+        time: document.getElementById('itineraryTime').value, // Aggiungi l'orario se necessario
+        activities: document.getElementById('activities').value.split('\n'),
+        coordinates: {
+            lat: parseFloat(document.getElementById('lat').value),
+            lng: parseFloat(document.getElementById('lng').value)
+        }
     };
 
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/itinerary`, {
+        // Salva l'itinerario nel backend
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/itinerary`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -485,9 +545,29 @@ async function saveItinerary(vacationId) {
             throw new Error('Errore durante il salvataggio dell\'itinerario');
         }
 
-        const updatedVacation = await response.json();
-        currentVacation = updatedVacation; // Aggiorna currentVacation con i dati aggiornati
-        loadItinerary(updatedVacation.itinerary);
+        // Dopo aver salvato l'itinerario, recupera i dati aggiornati della vacanza
+        const vacationResponse = await fetch(`http://localhost:5002/api/vacations/${vacationId}`);
+        if (!vacationResponse.ok) {
+            throw new Error('Errore nel recuperare i dettagli della vacanza');
+        }
+
+        // Ottieni la vacanza aggiornata
+        const updatedVacation = await vacationResponse.json();
+        currentVacation = updatedVacation; // Aggiorna la vacanza corrente
+
+        // Ordina e carica l'itinerario aggiornato nella card
+        loadItinerary(updatedVacation.itinerary); // Funzione che ricarica e visualizza l'itinerario aggiornato
+
+        // Aggiungi subito il marker alla mappa con l'icona del segnale di posizione
+        if (itineraryData.coordinates.lat && itineraryData.coordinates.lng) {
+            L.marker([itineraryData.coordinates.lat, itineraryData.coordinates.lng], { icon: itineraryIcon })
+                .addTo(map)
+                .bindPopup(`<b>Itinerary:</b><br>${itineraryData.activities.join(', ')}`);
+        }
+
+        // Chiudi il modale dell'itinerario
+        closeModal('itineraryModal');
+        
     } catch (error) {
         console.error('Errore nel salvataggio dell\'itinerario:', error.message);
     }
@@ -500,7 +580,7 @@ async function updateItinerary(vacationId, itineraryId) {
     };
 
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -522,7 +602,7 @@ async function updateItinerary(vacationId, itineraryId) {
 
 async function deleteItinerary(vacationId, itineraryId) {
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
+        const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
             method: 'DELETE',
         });
 
@@ -540,7 +620,14 @@ async function deleteItinerary(vacationId, itineraryId) {
 
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
+
+    // Solo distruggi la mappa se il modale è quello della mappa
+    if (modalId === 'mapModal' && map) {
+        map.remove();
+        map = null;  // Imposta a null per consentire la reinizializzazione
+    }
 }
+
 
 function goBack() {
     window.location.href = 'index.html'; // Torna alla homepage
