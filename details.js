@@ -332,32 +332,19 @@ function addMarkers(map) {
             }
         });
 
-        // Collega i marker dello stesso giorno usando le strade (tramite OSRM)
+        // Collega i marker dello stesso giorno con una linea retta
         Object.keys(dayGroups).forEach(day => {
             const group = dayGroups[day];
             if (group.markers.length > 1) {
-                // Costruisci la query per OSRM (str -> 'lat,lng;lat,lng;...') per ottenere il percorso
-                const coordinates = group.markers.map(coord => coord.reverse().join(',')).join(';');
-                const osrmURL = `https://router.project-osrm.org/route/v1/driving/${coordinates}?overview=full&geometries=geojson`;
-
-                // Effettua una richiesta di routing a OSRM
-                fetch(osrmURL)
-                    .then(response => response.json())
-                    .then(data => {
-                        const route = data.routes[0].geometry;
-
-                        // Aggiungi la polyline del percorso alla mappa
-                        L.geoJSON(route, {
-                            color: group.color,
-                            weight: 4
-                        }).addTo(map);
-                    })
-                    .catch(error => console.error('Error fetching route from OSRM:', error));
+                // Usa Leaflet Polyline per collegare i marker con una linea retta
+                const polyline = L.polyline(group.markers, {
+                    color: group.color,
+                    weight: 4
+                }).addTo(map);
             }
         });
     }
 }
-
 
 async function getCoordinates(address) {
     try {
