@@ -316,6 +316,8 @@ function openMapWithZoom() {
     addMarkers(map, 'all');  // Aggiungi tutti i marker come al solito
 }
 
+
+
 function initializeMap() {
     map = L.map('map').setView([0, 0], 2); // Inizializza la mappa
 
@@ -709,6 +711,33 @@ async function deleteItinerary(vacationId, itineraryId) {
         console.error('Errore nell\'eliminazione dell\'itinerario:', error.message);
     }
 }
+
+async function searchPlace() {
+    const query = document.getElementById('mapSearchInput').value;
+    if (!query) {
+        alert('Please enter a location to search.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        if (data && data.length > 0) {
+            const { lat, lon } = data[0];  // Prendi le coordinate del primo risultato
+            map.setView([lat, lon], 14);  // Centra la mappa sul luogo cercato
+            
+            // Aggiungi un marker sulla posizione cercata
+            L.marker([lat, lon]).addTo(map)
+                .bindPopup(`<b>${query}</b>`)
+                .openPopup();
+        } else {
+            alert('Location not found. Try a different search.');
+        }
+    } catch (error) {
+        console.error('Error during place search:', error);
+    }
+}
+
 
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
