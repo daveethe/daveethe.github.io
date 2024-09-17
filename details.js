@@ -305,27 +305,16 @@ function openMapWithZoom() {
         map.invalidateSize();  // Assicura che la mappa venga ridimensionata correttamente nel modale
     }, 200);
 
-    // Cerca l'aeroporto di destinazione nei dati dei voli
-    const destinationFlight = currentVacation.flights.find(flight => flight.arrivalAirport);
-
-    if (destinationFlight) {
-        getCoordinates(destinationFlight.arrivalAirport).then(coords => {
-            if (coords) {
-                // Centra e zoomma sulla destinazione dell'aeroporto di arrivo
-                map.setView(coords, 10);  // Zoom a livello 10 o altro livello a seconda della tua preferenza
-
-                // Aggiungi il marker per l'aeroporto di destinazione
-                L.marker(coords, { icon: flightIcon })
-                    .addTo(map)
-                    .bindPopup(`<b>Arrival at ${destinationFlight.arrivalAirport}</b>`);
-            }
-        });
-    }
+    // Aggiungi il listener per il clic sulla mappa se non è già presente
+    map.on('click', function (e) {
+        const { lat, lng } = e.latlng;
+        // Apri il modale e passa le coordinate cliccate
+        openModal('itineraryModal', 'add', { lat, lng });
+    });
 
     // Aggiungi i marker esistenti per gli altri dati (voli, hotel, itinerari)
     addMarkers(map, 'all');  // Aggiungi tutti i marker come al solito
 }
-
 
 function initializeMap() {
     map = L.map('map').setView([0, 0], 2); // Inizializza la mappa
