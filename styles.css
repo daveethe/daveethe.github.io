@@ -537,7 +537,7 @@ h1 {
 }
 
 #daySelector {
-    border: 2px solid #cccccc;  /* Bordo arrotondato e definito */
+    border: 1px solid #cccccc;  /* Bordo arrotondato e definito */
     border-radius: 5px;  /* Bordi arrotondati per un aspetto più moderno */
     background-color: #f9f9f9;  /* Sfondo leggero per un aspetto più soft */
     color: #333;  /* Colore del testo */
@@ -562,9 +562,9 @@ h1 {
 }
 
 #mapSearchInput {
-    width: 80%;
+    width: 90%;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     border: 1px solid #ddd;
     margin-right: 10px;
 }
