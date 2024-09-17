@@ -398,9 +398,14 @@ function addMarkers(map, selectedDate = 'all') {
                     className: ''  // Remove default Leaflet styling
                 });
 
-                const marker = L.marker([lat, lng], { icon: numberIcon }) // Usa l'icona personalizzata con il numero
+                // Aggiungi il marker con il pop-up contenente attività e orario
+                L.marker([lat, lng], { icon: numberIcon })
                     .addTo(map)
-                    .bindPopup(`<b>Itinerary:</b><br>${day.activities.join(', ')}`);
+                    .bindPopup(`
+                        <b>Itinerary:</b><br>
+                        ${day.activities.join(', ')}<br>
+                        <b>Time:</b> ${day.time ? day.time : 'N/A'}
+                    `);
                 bounds.extend([lat, lng]);  // Aggiungi il marker ai confini
             }
         });
