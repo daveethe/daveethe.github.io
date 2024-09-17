@@ -24,6 +24,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadFlights(currentVacation.flights);
         loadHotels(currentVacation.hotels);
         loadItinerary(currentVacation.itinerary);
+
+        // Ora che currentVacation è impostato, popola il selettore
+        const daySelector = document.getElementById('daySelector');
+        if (currentVacation.itinerary && daySelector) {
+            const uniqueDates = [...new Set(currentVacation.itinerary.map(day => day.date))];
+            uniqueDates.forEach((date, index) => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.textContent = `Day ${index + 1}: ${new Date(date).toLocaleDateString()}`;
+                daySelector.appendChild(option);
+            });
+        }
+
+        // Aggiungi il listener per il selettore dei giorni
+        document.getElementById('daySelector').addEventListener('change', function(e) {
+            const selectedDate = e.target.value;
+            addMarkers(map, selectedDate);  // Passa la data selezionata
+        });
+
     } catch (error) {
         console.error('Errore:', error.message);
     }
@@ -32,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('addFlightBtn').addEventListener('click', () => openModal('flightModal', 'add'));
     document.getElementById('addHotelBtn').addEventListener('click', () => openModal('hotelModal', 'add'));
     document.getElementById('addItineraryBtn').addEventListener('click', () => openModal('itineraryModal', 'add'));
-    document.getElementById('openMapBtn').addEventListener('click', () => openModal('mapModal', 'viewMap'));
+    document.getElementById('openMapBtn').addEventListener('click', () => openMapWithZoom());
 
     // Gestori di eventi per il submit dei moduli
     document.getElementById('flightForm').addEventListener('submit', async (e) => {
@@ -67,6 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         closeModal('itineraryModal');
     });
+
 });
 
 // Icone personalizzate per i marker
@@ -249,6 +269,65 @@ function openModal(modalId, mode, data = {}) {
 
 
 
+function updateDaySelector(newDate) {
+    const daySelector = document.getElementById('daySelector');
+
+    // Verifica se la data è già nel selettore
+    const options = Array.from(daySelector.options);
+    const dateAlreadyExists = options.some(option => option.value === newDate);
+
+    // Se la data non esiste, aggiungila
+    if (!dateAlreadyExists) {
+        const option = document.createElement('option');
+        const index = options.length; // Conta quanti giorni ci sono già
+        option.value = newDate;
+        option.textContent = `Day ${index}: ${new Date(newDate).toLocaleDateString()}`;
+        daySelector.appendChild(option);
+    }
+}
+
+function openMapWithZoom() {
+    // Apri il modale della mappa prima di qualsiasi azione
+    document.getElementById('mapModal').style.display = 'block';
+
+    // Inizializza la mappa solo se non esiste già
+    if (!map) {
+        map = L.map('map').setView([0, 0], 2);  // Mappa iniziale (senza zoom, verrà aggiornato dopo)
+    }
+
+    // Aggiungi il tile layer alla mappa (OpenStreetMap o qualsiasi altro)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Invalidare le dimensioni della mappa (necessario quando la mappa è in un modale)
+    setTimeout(() => {
+        map.invalidateSize();  // Assicura che la mappa venga ridimensionata correttamente nel modale
+    }, 200);
+
+    // Cerca l'aeroporto di destinazione nei dati dei voli
+    const destinationFlight = currentVacation.flights.find(flight => flight.arrivalAirport);
+
+    if (destinationFlight) {
+        getCoordinates(destinationFlight.arrivalAirport).then(coords => {
+            if (coords) {
+                // Centra e zoomma sulla destinazione dell'aeroporto di arrivo
+                map.setView(coords, 10);  // Zoom a livello 10 o altro livello a seconda della tua preferenza
+
+                // Aggiungi il marker per l'aeroporto di destinazione
+                L.marker(coords, { icon: flightIcon })
+                    .addTo(map)
+                    .bindPopup(`<b>Arrival at ${destinationFlight.arrivalAirport}</b>`);
+            }
+        });
+    }
+
+    // Aggiungi i marker esistenti per gli altri dati (voli, hotel, itinerari)
+    addMarkers(map, 'all');  // Aggiungi tutti i marker come al solito
+}
+
+
 function initializeMap() {
     map = L.map('map').setView([0, 0], 2); // Inizializza la mappa
 
@@ -267,20 +346,16 @@ function initializeMap() {
     });
 }
 
-
-function addMarkers(map) {
+function addMarkers(map, selectedDate = 'all') {
     if (currentVacation) {
         let dayGroups = {};  // Memorizza i marker per ogni giorno
 
-        // Funzione per generare un colore casuale
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
+        // Rimuovi i marker esistenti dalla mappa prima di aggiungere nuovi marker
+        map.eachLayer(layer => {
+            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                map.removeLayer(layer);
             }
-            return color;
-        }
+        });
 
         // Aggiungi marker per i voli (partenza e arrivo)
         currentVacation.flights.forEach(flight => {
@@ -312,35 +387,22 @@ function addMarkers(map) {
             });
         });
 
-        // Aggiungi marker e linee per l'itinerario
-        currentVacation.itinerary.forEach(day => {
-            if (day.coordinates) {
+        // Aggiungi marker e linee per l'itinerario in base alla data selezionata
+        currentVacation.itinerary.forEach((day, index) => {
+            if (day.coordinates && (selectedDate === 'all' || selectedDate === day.date)) {
                 const { lat, lng } = day.coordinates;
-                const marker = L.marker([lat, lng], { icon: itineraryIcon })
+                const numberIcon = L.divIcon({
+                    html: `<div style="position: relative;">
+                                <img src="https://i.imgur.com/ZPrgeXt.png" style="width: 24px; height: 24px;" />
+                                <span style="position: absolute; top: -8px; left: 16px; font-size: 12px; color: black; background-color: white; padding: 2px; border-radius: 50%;">${index + 1}</span>
+                            </div>`,
+                    iconSize: [24, 24],
+                    className: ''  // Remove default Leaflet styling
+                });
+
+                L.marker([lat, lng], { icon: numberIcon }) // Usa l'icona personalizzata con il numero
                     .addTo(map)
                     .bindPopup(`<b>Itinerary:</b><br>${day.activities.join(', ')}`);
-
-                // Raggruppa i marker per giorno
-                const dayKey = day.date.split('T')[0]; // Usa solo la parte della data senza l'orario
-                if (!dayGroups[dayKey]) {
-                    dayGroups[dayKey] = {
-                        markers: [],
-                        color: getRandomColor()  // Colore diverso per ogni giorno
-                    };
-                }
-                dayGroups[dayKey].markers.push([lat, lng]);
-            }
-        });
-
-        // Collega i marker dello stesso giorno con una linea retta
-        Object.keys(dayGroups).forEach(day => {
-            const group = dayGroups[day];
-            if (group.markers.length > 1) {
-                // Usa Leaflet Polyline per collegare i marker con una linea retta
-                const polyline = L.polyline(group.markers, {
-                    color: group.color,
-                    weight: 4
-                }).addTo(map);
             }
         });
     }
@@ -386,10 +448,15 @@ function editItinerary(itineraryId) {
     const itinerary = currentVacation.itinerary.find(i => i._id === itineraryId);
     if (itinerary) {
         openModal('itineraryModal', 'edit', itinerary);
+        // Aggiungi questo per popolare il campo time
+        if (itinerary.time) {
+            document.getElementById('itineraryTime').value = itinerary.time;
+        }
     } else {
         console.error('Itinerary not found.');
     }
 }
+
 
 async function saveFlight(vacationId) {
     const flightData = {
@@ -589,6 +656,9 @@ async function saveItinerary(vacationId) {
         // Ordina e carica l'itinerario aggiornato nella card
         loadItinerary(updatedVacation.itinerary); // Funzione che ricarica e visualizza l'itinerario aggiornato
 
+        // **Aggiorna il selettore di giorni con la nuova data**
+        updateDaySelector(itineraryData.date); // Aggiungi questa linea per aggiornare il menu a tendina
+
         // Aggiungi subito il marker alla mappa con l'icona del segnale di posizione
         if (itineraryData.coordinates.lat && itineraryData.coordinates.lng) {
             L.marker([itineraryData.coordinates.lat, itineraryData.coordinates.lng], { icon: itineraryIcon })
@@ -604,9 +674,11 @@ async function saveItinerary(vacationId) {
     }
 }
 
+
 async function updateItinerary(vacationId, itineraryId) {
     const itineraryData = {
         date: document.getElementById('itineraryDate').value,
+        time: document.getElementById('itineraryTime').value, // Aggiungi l'orario
         activities: document.getElementById('activities').value.split('\n')
     };
 
@@ -630,6 +702,7 @@ async function updateItinerary(vacationId, itineraryId) {
         console.error('Errore nell\'aggiornamento dell\'itinerario:', error.message);
     }
 }
+
 
 async function deleteItinerary(vacationId, itineraryId) {
     try {
