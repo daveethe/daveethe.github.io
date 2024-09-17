@@ -7,7 +7,7 @@
     <title>Vacation Details</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />  
 </head>
 <body>
     <div class="container">
@@ -48,9 +48,17 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('mapModal')">&times;</span>
             <h2>Map View</h2>
+            <div id="daySelectorContainer">
+                <label for="daySelector">Select a day:</label>
+                <select id="daySelector">
+                    <option value="all">Show all days</option>
+                </select>
+            </div>
             <div id="map" style="height: 400px;"></div>
         </div>
     </div>
+
+    
 
     <!-- Modale per Aggiungere/Modificare un Volo -->
     <div id="flightModal" class="modal">
