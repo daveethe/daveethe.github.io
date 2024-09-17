@@ -522,3 +522,36 @@ h1 {
     cursor: pointer;
     color: #007bff;
 }
+
+#daySelectorContainer {
+    display: flex;
+    margin-bottom: 10px;  /* Spazio tra il div e la mappa */
+    align-items: flex-start;  /* Allinea a sinistra il contenuto */
+}
+
+#daySelectorContainer label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;  /* Colore più scuro per il testo */
+    margin-bottom: 5px;  /* Piccolo spazio tra l'etichetta e il selettore */
+}
+
+#daySelector {
+    border: 2px solid #cccccc;  /* Bordo arrotondato e definito */
+    border-radius: 5px;  /* Bordi arrotondati per un aspetto più moderno */
+    background-color: #f9f9f9;  /* Sfondo leggero per un aspetto più soft */
+    color: #333;  /* Colore del testo */
+    outline: none;  /* Rimuove il bordo di default quando selezionato */
+    transition: border-color 0.3s ease;  /* Transizione per effetti hover */
+    margin: 0px 0px 0px 10px
+}
+
+#daySelector:hover {
+    border-color: #007bff;  /* Colore del bordo al passaggio del mouse */
+}
+
+#daySelector:focus {
+    border-color: #0056b3;  /* Colore del bordo quando è selezionato */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);  /* Aggiunge un'ombra per il focus */
+}
+
