@@ -208,7 +208,7 @@ function loadItinerary(itinerary) {
                 <ul>
                     ${day.activities.map(activity => `<li>${activity}</li>`).join('')}
                 </ul>
-                <div>Location: ${day.coordinates ? `(${day.coordinates.lat}, ${day.coordinates.lng})` : 'N/A'}</div>
+                <div>Location: ${day.coordinates ? `<a href="https://www.google.com/maps?q=${day.coordinates.lat},${day.coordinates.lng}" target="_blank">(${day.coordinates.lat}, ${day.coordinates.lng})</a>` : 'N/A'}</div>
                 <div class="actions">
                     <button onclick="editItinerary('${day._id}')">✏️</button>
                     <button onclick="deleteItinerary('${currentVacation._id}', '${day._id}')">🗑️</button>
@@ -218,7 +218,6 @@ function loadItinerary(itinerary) {
         itineraryList.appendChild(itineraryItem);
     });
 }
-
 
 function openModal(modalId, mode, data = {}) {
     const formId = `${modalId.split('Modal')[0]}Form`; // Assicura che l'ID del form sia corretto
