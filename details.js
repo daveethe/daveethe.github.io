@@ -402,9 +402,8 @@ function addMarkers(map, selectedDate = 'all') {
                 L.marker([lat, lng], { icon: numberIcon })
                     .addTo(map)
                     .bindPopup(`
-                        <b>Itinerary:</b><br>
-                        ${day.activities.join(', ')}<br>
-                        <b>Time:</b> ${day.time ? day.time : 'N/A'}
+                        <b>${day.activities.join(', ')}</b><br>
+                        <div>Time: ${day.time ? day.time : 'N/A'}</div>
                     `);
                 bounds.extend([lat, lng]);  // Aggiungi il marker ai confini
             }
