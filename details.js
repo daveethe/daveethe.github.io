@@ -1,5 +1,6 @@
 let currentVacation = null; // Definizione globale
 let map; // Variabile globale per la mappa
+let manualMarkers = [];  // Variabile per salvare i marker aggiunti dall'utente
 
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -328,21 +329,25 @@ function initializeMap() {
 
     addMarkers(map); // Aggiungi i marker esistenti (voli, hotel, ecc.)
 
-    // Aggiungi un listener per il clic sulla mappa
+    // Aggiungi un listener per il clic sulla mappa per aggiungere marker manuali
     map.on('click', function (e) {
         const { lat, lng } = e.latlng;
-        // Apri il modale e passa le coordinate cliccate
+        const marker = L.marker([lat, lng], { icon: itineraryIcon }) // Usa l'icona del segnale di posizione
+            .addTo(map)
+            .bindPopup(`<b>New Marker</b><br>Lat: ${lat}, Lng: ${lng}`);
+
+        manualMarkers.push(marker);  // Salva il marker aggiunto manualmente
         openModal('itineraryModal', 'add', { lat, lng });
     });
 }
 
 function addMarkers(map, selectedDate = 'all') {
     if (currentVacation) {
-        let dayGroups = {};  // Memorizza i marker per ogni giorno
+        const bounds = L.latLngBounds();  // Crea i confini da espandere per includere tutti i marker
 
-        // Rimuovi i marker esistenti dalla mappa prima di aggiungere nuovi marker
+        // Rimuovi solo i marker che non sono stati aggiunti manualmente
         map.eachLayer(layer => {
-            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+            if (layer instanceof L.Marker && !manualMarkers.includes(layer)) {
                 map.removeLayer(layer);
             }
         });
@@ -351,17 +356,19 @@ function addMarkers(map, selectedDate = 'all') {
         currentVacation.flights.forEach(flight => {
             getCoordinates(flight.departureAirport).then(coords => {
                 if (coords) {
-                    L.marker(coords, { icon: flightIcon })
+                    const marker = L.marker(coords, { icon: flightIcon })
                         .addTo(map)
-                        .bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Departure: ${flight.departureAirport}`);
+                        .bindPopup(`<b>Departure from ${flight.departureAirport}</b>`);
+                    bounds.extend(coords);  // Aggiungi il marker ai confini
                 }
             });
 
             getCoordinates(flight.arrivalAirport).then(coords => {
                 if (coords) {
-                    L.marker(coords, { icon: flightIcon })
+                    const marker = L.marker(coords, { icon: flightIcon })
                         .addTo(map)
-                        .bindPopup(`<b>${flight.airline} - ${flight.flightNumber}</b><br>Arrival: ${flight.arrivalAirport}`);
+                        .bindPopup(`<b>Arrival at ${flight.arrivalAirport}</b>`);
+                    bounds.extend(coords);  // Aggiungi il marker ai confini
                 }
             });
         });
@@ -370,9 +377,10 @@ function addMarkers(map, selectedDate = 'all') {
         currentVacation.hotels.forEach(hotel => {
             getCoordinates(hotel.address).then(coords => {
                 if (coords) {
-                    L.marker(coords, { icon: hotelIcon })
+                    const marker = L.marker(coords, { icon: hotelIcon })
                         .addTo(map)
                         .bindPopup(`<b>${hotel.name}</b><br>${hotel.address}`);
+                    bounds.extend(coords);  // Aggiungi il marker ai confini
                 }
             });
         });
@@ -390,11 +398,15 @@ function addMarkers(map, selectedDate = 'all') {
                     className: ''  // Remove default Leaflet styling
                 });
 
-                L.marker([lat, lng], { icon: numberIcon }) // Usa l'icona personalizzata con il numero
+                const marker = L.marker([lat, lng], { icon: numberIcon }) // Usa l'icona personalizzata con il numero
                     .addTo(map)
                     .bindPopup(`<b>Itinerary:</b><br>${day.activities.join(', ')}`);
+                bounds.extend([lat, lng]);  // Aggiungi il marker ai confini
             }
         });
+
+        // Applica i confini (bounds) alla mappa dopo che tutti i marker sono stati aggiunti
+        map.fitBounds(bounds);
     }
 }
 
