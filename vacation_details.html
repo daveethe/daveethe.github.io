@@ -48,6 +48,10 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('mapModal')">&times;</span>
             <h2>Map View</h2>
+            <div id="search-container">
+                <input type="text" id="mapSearchInput" placeholder="Search for a place" />
+                <button onclick="searchPlace()">Search</button>
+            </div>
             <div id="daySelectorContainer">
                 <label for="daySelector">Select a day:</label>
                 <select id="daySelector">
@@ -57,8 +61,6 @@
             <div id="map" style="height: 400px;"></div>
         </div>
     </div>
-
-    
 
     <!-- Modale per Aggiungere/Modificare un Volo -->
     <div id="flightModal" class="modal">
