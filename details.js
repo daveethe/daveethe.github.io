@@ -2,6 +2,7 @@ let currentVacation = null; // Definizione globale
 let map; // Variabile globale per la mappa
 let manualMarkers = [];  // Variabile per salvare i marker aggiunti dall'utente
 
+
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const vacationId = urlParams.get('id');
@@ -106,7 +107,7 @@ const hotelIcon = L.icon({
 });
 
 const itineraryIcon = L.icon({
-    iconUrl: 'https://i.imgur.com/ZPrgeXt.png', // URL dell'icona del segnale di posizione
+    iconUrl: 'https://i.imgur.com/Q0gQIPW.png', // URL dell'icona del segnale di posizione
     iconSize: [24, 24], // Dimensione dell'icona
     iconAnchor: [12, 24], // Punto di ancoraggio dell'icona
     popupAnchor: [0, -24], // Punto di ancoraggio del popup rispetto all'icona
@@ -341,6 +342,7 @@ function initializeMap() {
     });
 }
 
+
 function addMarkers(map, selectedDate = 'all') {
     if (currentVacation) {
         const bounds = L.latLngBounds();  // Crea i confini da espandere per includere tutti i marker
@@ -391,7 +393,7 @@ function addMarkers(map, selectedDate = 'all') {
                 const { lat, lng } = day.coordinates;
                 const numberIcon = L.divIcon({
                     html: `<div style="position: relative;">
-                                <img src="https://i.imgur.com/ZPrgeXt.png" style="width: 24px; height: 24px;" />
+                                <img src="https://i.imgur.com/Q0gQIPW.png" style="width: 24px; height: 24px;" />
                                 <span style="position: absolute; top: -8px; left: 16px; font-size: 12px; color: black; background-color: white; padding: 2px; border-radius: 50%;">${index + 1}</span>
                             </div>`,
                     iconSize: [24, 24],
