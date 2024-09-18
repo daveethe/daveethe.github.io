@@ -6,9 +6,8 @@
     <title>Vacation Planner</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
 </head>
 <body>
     <div class="container">
@@ -23,8 +22,8 @@
 
     <!-- Overlay per il calendario -->
     <div id="calendarOverlay" class="calendar-overlay" style="display: none;">
-        <div id="vacationCalendar" class="calendar-container">
-            <input id="calendarInput" class="calendar" />
+        <div id="calendarContainer" class="calendar-container">
+            <div id="calendar"></div> <!-- FullCalendar sarà qui -->
         </div>
     </div>
 
