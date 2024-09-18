@@ -186,74 +186,57 @@ async function editVacation(id) {
 // Carica tutte le vacanze all'avvio
 fetchVacations();
 
-// Seleziona l'icona del calendario e il div che contiene il calendario
-const calendarButton = document.getElementById('calendarButton');
-const calendarOverlay = document.getElementById('calendarOverlay');
 
-// Aggiungi l'evento di click all'icona per visualizzare/nascondere il calendario
-calendarButton.addEventListener('click', () => {
-    calendarOverlay.style.display = 'flex'; // Mostra l'overlay e il calendario
-});
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarButton = document.getElementById('calendarButton');
+    const calendarOverlay = document.getElementById('calendarOverlay');
 
-// Nascondi il calendario quando l'utente clicca fuori dal calendario o preme ESC
-calendarOverlay.addEventListener('click', (event) => {
-    if (event.target === calendarOverlay) {
-        calendarOverlay.style.display = 'none'; // Nasconde il calendario
-    }
-});
+    // Mostra l'overlay quando si clicca sull'icona del calendario
+    calendarButton.addEventListener('click', function() {
+        calendarOverlay.style.display = 'flex';
 
-// Nascondi il calendario se l'utente preme il tasto "ESC"
-document.addEventListener('keydown', (event) => {
-    if (event.key === "Escape") {
-        calendarOverlay.style.display = 'none'; // Nasconde il calendario
-    }
-});
+        // Forza il rendering corretto del calendario quando diventa visibile
+        setTimeout(function() {
+            calendar.render();  // Assicurati che il calendario venga renderizzato correttamente
+        }, 100);  // Aggiungi un breve ritardo per il rendering
+    });
 
-// Funzione per ottenere le vacanze dal server
-async function fetchVacationsForCalendar() {
-    try {
-        const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations');
-        const vacations = await response.json();
+    // Chiudi l'overlay cliccando fuori dal calendario
+    calendarOverlay.addEventListener('click', function(event) {
+        if (event.target === calendarOverlay) {
+            calendarOverlay.style.display = 'none';
+        }
+    });
 
-        // Estrai le date delle vacanze
-        const vacationDates = vacations.map(vacation => {
-            return {
-                start: new Date(vacation.startDate).setHours(0, 0, 0, 0), // Imposta l'ora a mezzanotte
-                end: new Date(vacation.endDate).setHours(23, 59, 59, 999) // Imposta la fine del giorno
-            };
-        });
-
-        // Inizializza il calendario flatpickr con le date delle vacanze evidenziate
-        flatpickr('#calendarInput', {
-            inline: true, // Mostra il calendario sempre aperto
-            mode: 'range', // Permette di selezionare intervalli di date
-            disable: vacationDates.map(v => ({ 
-                from: new Date(v.start), 
-                to: new Date(v.end)
-            })),
-            enable: vacationDates.map(v => ({ 
-                from: new Date(v.start), 
-                to: new Date(v.end)
-            })),
-            onDayCreate: function(dObj, dStr, fp, dayElem) {
-                // Colora i giorni delle vacanze
-                const date = new Date(dayElem.dateObj).setHours(0, 0, 0, 0); // Imposta l'ora a mezzanotte
-                const inVacation = vacationDates.some(v => {
-                    const start = v.start;
-                    const end = v.end;
-                    return date >= start && date <= end;
-                });
-
-                if (inVacation) {
-                    dayElem.style.backgroundColor = '#FFDD57'; // Colore per i giorni di vacanza
-                    dayElem.style.color = 'white';
-                }
+    // Inizializza FullCalendar
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: async function(fetchInfo, successCallback, failureCallback) {
+            try {
+                const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations');
+                const vacations = await response.json();
+                
+                const events = vacations.map(vacation => ({
+                    title: vacation.name,
+                    start: vacation.startDate,
+                    end: vacation.endDate,
+                    backgroundColor: '#378006'
+                }));
+                
+                successCallback(events);
+            } catch (error) {
+                console.error('Errore durante il recupero degli eventi:', error);
+                failureCallback(error);
             }
-        });
-    } catch (error) {
-        console.error('Errore nel recupero delle vacanze:', error);
-    }
-}
-
-// Recupera le vacanze e configura il calendario al caricamento della pagina
-fetchVacationsForCalendar();
+        },
+        editable: true,
+        dateClick: function(info) {
+            alert('Hai cliccato la data: ' + info.dateStr);
+        },
+        eventClick: function(info) {
+            window.location.href = `vacation_details.html?id=${info.event.id}`;
+        }
+    });
+    calendar.render();
+});
