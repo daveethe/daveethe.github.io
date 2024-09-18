@@ -493,6 +493,34 @@ h1 {
     z-index: 100;
 }
 
+/* Container del calendario */
+.calendar-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 80%; /* Puoi regolare la larghezza */
+    max-width: 800px;
+    min-height: 600px; /* Aggiungi un'altezza minima adeguata */
+    display: flex; /* Usato per centrare il calendario */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Calendar FullCalendar specifico */
+#calendar {
+    width: 100%;  /* Assicurati che il calendario prenda tutta la larghezza */
+    height: auto;
+    min-height: 500px; /* Forza una minima altezza */
+}
+
+
+/* Effetto hover per l'icona del calendario */
+.calendar-icon:hover {
+    cursor: pointer;
+    color: #007bff;
+}
+
 /* Overlay per il calendario */
 .calendar-overlay {
     position: fixed;
@@ -500,28 +528,19 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Semi-trasparente per oscurare il contenuto */
-    backdrop-filter: blur(5px); /* Effetto blur */
+    background: rgba(0, 0, 0, 0.5); /* Sfondo semi-trasparente */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Portalo in primo piano */
+    z-index: 1000; /* Porta in primo piano l'overlay */
 }
 
-/* Container del calendario */
-.calendar-container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 300px; /* Dimensione del calendario */
-}
-
-/* Effetto hover per l'icona del calendario */
+/* Icona del calendario */
 .calendar-icon:hover {
     cursor: pointer;
     color: #007bff;
 }
+
 
 #daySelectorContainer {
     display: flex;
@@ -564,7 +583,7 @@ h1 {
 #mapSearchInput {
     width: 90%;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 5px;
     border: 1px solid #ddd;
     margin-right: 10px;
 }
