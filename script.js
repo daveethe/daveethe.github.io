@@ -212,9 +212,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
+        firstDay: 1, // Imposta il lunedì come primo giorno della settimana
+        displayEventTime: false, // Nasconde l'orario negli eventi
         events: async function(fetchInfo, successCallback, failureCallback) {
             try {
-                const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations');
+                const response = await fetch('http://localhost:5002/api/vacations');
                 const vacations = await response.json();
                 
                 const events = vacations.map(vacation => ({
