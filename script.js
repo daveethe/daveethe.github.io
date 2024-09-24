@@ -36,7 +36,7 @@ vacationForm.addEventListener('submit', async (e) => {
     if (isEditing) {
         // Logica per aggiornare la vacanza esistente
         try {
-            const updateResponse = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${editingVacationId}`, {
+            const updateResponse = await fetch(`http://localhost:5002/api/vacations/${editingVacationId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ vacationForm.addEventListener('submit', async (e) => {
         try {
             console.log('Form data:', { name, startDate, endDate });
 
-            const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations', {
+            const response = await fetch('http://localhost:5002/api/vacations', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ vacationForm.addEventListener('submit', async (e) => {
 // Funzione per recuperare tutte le vacanze dal backend
 async function fetchVacations() {
     try {
-        const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations');
+        const response = await fetch('http://localhost:5002/api/vacations');
         if (!response.ok) {
             throw new Error('Errore nel recuperare le vacanze');
         }
@@ -143,7 +143,7 @@ function displayVacation(vacation) {
 // Funzione per eliminare una vacanza
 async function deleteVacation(id) {
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${id}`, {
+        const response = await fetch(`http://localhost:5002/api/vacations/${id}`, {
             method: 'DELETE',
         });
 
@@ -163,7 +163,7 @@ async function editVacation(id) {
     console.log(`Edit button clicked for vacation with ID: ${id}`);
 
     try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${id}`);
+        const response = await fetch(`http://localhost:5002/api/vacations/${id}`);
         if (!response.ok) {
             throw new Error('Errore nel recuperare i dati della vacanza');
         }
@@ -220,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const vacations = await response.json();
                 
                 const events = vacations.map(vacation => ({
+                    id: vacation._id, // Aggiungi l'ID della vacanza come proprietà dell'evento
                     title: vacation.name,
                     start: vacation.startDate,
                     end: vacation.endDate,
@@ -237,8 +238,10 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Hai cliccato la data: ' + info.dateStr);
         },
         eventClick: function(info) {
+            // Reindirizza alla pagina dei dettagli della vacanza
             window.location.href = `vacation_details.html?id=${info.event.id}`;
         }
     });
     calendar.render();
+
 });
