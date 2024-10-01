@@ -4,20 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vacation Planner</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="styles.css">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
 </head>
 <body>
     <div class="container">
-        <h1>Vacation Planner</h1>
-        <button id="addVacationBtn">+ Add Vacation</button>
-        <div id="vacationList"></div>
-        <!-- Aggiungi l'icona del calendario in alto a destra -->
-        <div class="calendar-icon" style="position: absolute; top: 20px; right: 20px;">
-            <i id="calendarButton" class="fas fa-calendar-alt" style="font-size: 24px; cursor: pointer;"></i>
+        <h1>VACATION PLANNER</h1>
+
+        <div class="icon-buttons">
+            <i id="addVacationBtn" class="fas fa-plus" title="Add Vacation"></i>
+            <i id="calendarButton" class="fas fa-calendar-alt" title="View Calendar"></i>
+            <i id="logoutButton" class="fas fa-sign-out-alt" title="Logout"></i>
         </div>
+        
+        
+        
+        <div class="countdown-strip">
+            <div class="countdown-wrapper">
+                <div id="countdown" class="countdown-container">
+                    <div class="countdown-item">
+                        <span id="days" class="countdown-number">00</span>
+                        <span class="countdown-label">DAYS</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="hours" class="countdown-number">00</span>
+                        <span class="countdown-label">HOURS</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="minutes" class="countdown-number">00</span>
+                        <span class="countdown-label">MINUTES</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="seconds" class="countdown-number">00</span>
+                        <span class="countdown-label">SECONDS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="vacationList"></div>
     </div>
 
     <!-- Overlay per il calendario -->
@@ -26,7 +53,6 @@
             <div id="calendar"></div> <!-- FullCalendar sarà qui -->
         </div>
     </div>
-
 
     <!-- Popup Modale -->
     <div id="vacationModal" class="modal">
@@ -50,6 +76,16 @@
             </form>
         </div>
     </div>
+
+    <!-- Modale per confermare l'eliminazione -->
+    <div id="confirmModal" style="display: none;">
+        <div class="modal-content">
+            <h2>Sei sicuro di voler eliminare questo elemento?</h2>
+            <button class="btn-confirm">Conferma</button>
+            <button class="btn-cancel">Annulla</button>
+        </div>
+    </div>
+
 
     <script>
         // Controlla se l'utente è autenticato
