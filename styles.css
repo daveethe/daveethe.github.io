@@ -23,22 +23,23 @@ h1 {
 /* Stile per i pulsanti icona in alto */
 .icon-buttons {
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 15px; /* Spazio tra le due icone */
+    align-items: center;
+    position: absolute;
+    top: 20px;
+    right: 20px;
 }
 
-.icon-btn {
-    background-color: transparent;
-    border: none;
+.icon-buttons i {
     cursor: pointer;
-    font-size: 24px;
+    color: #333;
     transition: color 0.3s ease;
 }
 
-.icon-btn:hover {
-    color: #007bff;
+.icon-buttons i:hover {
+    color: #007bff; /* Cambia colore al passaggio del mouse */
 }
+
 
 /* Layout a griglia per la lista delle vacanze */
 #vacationList {
@@ -67,7 +68,7 @@ h1 {
 /* Stile per il nome della vacanza */
 .vacation h3 {
     font-size: 1.5em;
-    margin-bottom: 5px;
+    margin: 5px 0px 5px 0px;
     color: #333;
 }
 
@@ -75,7 +76,7 @@ h1 {
 .vacation p {
     font-size: 0.9em;
     color: #777;
-    margin-bottom: 10px;
+    margin: 0px 0px 10px 0px;
 }
 
 /* Stile per le icone delle azioni (inizialmente nascoste) */
@@ -407,16 +408,7 @@ h1 {
     text-align: right;
 }
 
-#addVacationBtn {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+
 
 /* Stili per la pagina di login */
 
@@ -598,4 +590,182 @@ h1 {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.countdown-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Spazio tra i blocchi */
+}
+
+.countdown-container {
+    display: flex;
+    gap: 15px; /* Spazio tra i blocchi del countdown */
+    justify-content: center;
+}
+
+.countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Courier New', monospace; /* Font tipico da pannello di stazione */
+}
+
+.countdown-number {
+    font-size: 28px; /* Numero grande per evidenziarlo */
+    color: #fff; /* Testo bianco */
+    background-color: #333; /* Sfondo nero, simile a un pannello a led */
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    transition: all 0.3s ease-in-out;
+    perspective: 1000px; /* Aggiungi profondità per l'effetto flip */
+    position: relative;
+    overflow: hidden;
+}
+
+.countdown-number:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #111;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.countdown-number.flip {
+    animation: flip 0.6s ease-in-out;
+}
+
+@keyframes flip {
+    0% {
+        transform: rotateX(0deg);
+    }
+    50% {
+        transform: rotateX(-90deg);
+    }
+    100% {
+        transform: rotateX(0deg);
+    }
+}
+
+.countdown-label {
+    font-size: 14px;
+    color: black;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Stile generale per i pulsanti */
+.fc .fc-button {
+    background-color: #ffffff !important; /* Colore di sfondo bianco */
+    border: 1px solid #3498db !important; /* Bordi blu più sottili */
+    color: #3498db !important; /* Testo blu */
+    padding: 5px 10px !important; /* Riduci il padding per un pulsante più piccolo */
+    font-size: 12px !important; /* Dimensione testo più piccola */
+    border-radius: 4px !important; /* Angoli arrotondati leggeri */
+    font-family: Arial, sans-serif !important; /* Font semplice */
+    transition: background-color 0.3s ease, color 0.3s ease !important; /* Transizioni morbide */
+    min-width: 50px !important; /* Imposta una larghezza minima per rendere i pulsanti uniformi */
+    margin-right: 3px !important; /* Riduci lo spazio tra ogni singolo pulsante */
+}
+
+/* Colore del testo quando il pulsante è attivo */
+.fc .fc-button.fc-button-active {
+    background-color: #3498db !important; /* Sfondo blu quando attivo */
+    color: white !important; /* Testo bianco quando attivo */
+}
+
+/* Stile al passaggio del mouse */
+.fc .fc-button:hover {
+    background-color: #3498db !important; /* Sfondo cambia al passaggio del mouse */
+    color: #ffffff !important; /* Testo diventa bianco */
+    cursor: pointer !important;
+}
+
+/* Pulsante "Today" personalizzato */
+.fc .fc-button.fc-today-button {
+    background-color: #2ecc71 !important; /* Colore verde per il pulsante "Today" */
+    border-color: #2ecc71 !important; /* Bordo verde */
+    color: white !important; /* Testo bianco */
+    padding: 4px 5px !important; /* Riduci il padding per renderlo più piccolo */
+    font-size: 12px !important; /* Font size più piccola */
+}
+
+/* Hover sul pulsante "Today" */
+.fc .fc-button.fc-today-button:hover {
+    background-color: #27ae60 !important; /* Verde scuro al passaggio del mouse */
+    border-color: #27ae60 !important;
+}
+
+/* Pulsanti di navigazione prev/next */
+.fc .fc-button.fc-prev-button, .fc .fc-button.fc-next-button {
+    background-color: #f4f4f4 !important; /* Sfondo chiaro */
+    border: 1px solid #bdc3c7 !important; /* Colore di bordo grigio chiaro più sottile */
+    color: #2c3e50 !important; /* Testo grigio scuro */
+    padding: 4px 5px !important; /* Riduci il padding per renderli più piccoli */
+    font-size: 12px !important; /* Font size più piccola */
+    min-width: 35px !important; /* Imposta una larghezza minima per i pulsanti di navigazione */
+}
+
+/* Hover sui pulsanti di navigazione prev/next */
+.fc .fc-button.fc-prev-button:hover, .fc .fc-button.fc-next-button:hover {
+    background-color: #bdc3c7 !important; /* Grigio chiaro al passaggio del mouse */
+    border-color: #7f8c8d !important; /* Bordi grigio più scuro */
+    color: white !important; /* Testo bianco */
+}
+
+.fc .fc-button-group {
+    margin-left: 1px !important; /* Riduci lo spazio tra il gruppo di frecce e il pulsante "Today" */
+}
+
+/* Stili per il popup di conferma */
+#confirmModal {
+    display: none; /* Nascondi il modale di default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Sfondo trasparente */
+    backdrop-filter: blur(5px); /* Sfocatura dello sfondo */
+    justify-content: center;
+    align-items: center;
+}
+
+#confirmModal .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+#confirmModal .modal-content h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+#confirmModal .modal-content button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+}
+
+#confirmModal .btn-confirm {
+    background-color: #007bff;
+    color: white;
+}
+
+#confirmModal .btn-cancel {
+    background-color: #e0e0e0;
+    color: #333;
 }
