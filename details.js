@@ -267,8 +267,6 @@ function openModal(modalId, mode, data = {}) {
     }
 }
 
-
-
 function updateDaySelector(newDate) {
     const daySelector = document.getElementById('daySelector');
 
@@ -532,22 +530,26 @@ async function updateFlight(vacationId, flightId) {
 }
 
 async function deleteFlight(vacationId, flightId) {
-    try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights/${flightId}`, {
-            method: 'DELETE',
-        });
+    showConfirmModal(async () => {
+        try {
+            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights/${flightId}`, {
+                method: 'DELETE',
+            });
 
-        if (!response.ok) {
-            throw new Error('Errore durante l\'eliminazione del volo');
+            if (!response.ok) {
+                throw new Error('Errore durante l\'eliminazione del volo');
+            }
+
+            const updatedVacation = await response.json();
+            currentVacation = updatedVacation;
+            loadFlights(updatedVacation.flights);
+        } catch (error) {
+            console.error('Errore nell\'eliminazione del volo:', error.message);
         }
-
-        const updatedVacation = await response.json();
-        currentVacation = updatedVacation; // Aggiorna currentVacation con i dati aggiornati
-        loadFlights(updatedVacation.flights);
-    } catch (error) {
-        console.error('Errore nell\'eliminazione del volo:', error.message);
-    }
+    });
 }
+
+
 
 async function saveHotel(vacationId) {
     const hotelData = {
@@ -608,21 +610,23 @@ async function updateHotel(vacationId, hotelId) {
 }
 
 async function deleteHotel(vacationId, hotelId) {
-    try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels/${hotelId}`, {
-            method: 'DELETE',
-        });
+    showConfirmModal(async () => {
+        try {
+            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels/${hotelId}`, {
+                method: 'DELETE',
+            });
 
-        if (!response.ok) {
-            throw new Error('Errore durante l\'eliminazione dell\'hotel');
+            if (!response.ok) {
+                throw new Error('Errore durante l\'eliminazione dell\'hotel');
+            }
+
+            const updatedVacation = await response.json();
+            currentVacation = updatedVacation;
+            loadHotels(updatedVacation.hotels);
+        } catch (error) {
+            console.error('Errore nell\'eliminazione dell\'hotel:', error.message);
         }
-
-        const updatedVacation = await response.json();
-        currentVacation = updatedVacation; // Aggiorna currentVacation con i dati aggiornati
-        loadHotels(updatedVacation.hotels);
-    } catch (error) {
-        console.error('Errore nell\'eliminazione dell\'hotel:', error.message);
-    }
+    });
 }
 
 async function saveItinerary(vacationId) {
@@ -712,22 +716,43 @@ async function updateItinerary(vacationId, itineraryId) {
 
 
 async function deleteItinerary(vacationId, itineraryId) {
-    try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
-            method: 'DELETE',
-        });
+    showConfirmModal(async () => {
+        try {
+            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/itinerary/${itineraryId}`, {
+                method: 'DELETE',
+            });
 
-        if (!response.ok) {
-            throw new Error('Errore durante l\'eliminazione dell\'itinerario');
+            if (!response.ok) {
+                throw new Error('Errore durante l\'eliminazione dell\'itinerario');
+            }
+
+            const updatedVacation = await response.json();
+            currentVacation = updatedVacation;
+            loadItinerary(updatedVacation.itinerary);
+        } catch (error) {
+            console.error('Errore nell\'eliminazione dell\'itinerario:', error.message);
         }
-
-        const updatedVacation = await response.json();
-        currentVacation = updatedVacation; // Aggiorna currentVacation con i dati aggiornati
-        loadItinerary(updatedVacation.itinerary);
-    } catch (error) {
-        console.error('Errore nell\'eliminazione dell\'itinerario:', error.message);
-    }
+    });
 }
+
+function showConfirmModal(onConfirm) {
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.style.display = 'flex'; // Mostra il modale
+
+    // Quando l'utente conferma
+    const confirmButton = confirmModal.querySelector('.btn-confirm');
+    confirmButton.onclick = function() {
+        confirmModal.style.display = 'none'; // Nascondi il modale
+        onConfirm(); // Esegui la funzione passata come argomento
+    };
+
+    // Quando l'utente annulla
+    const cancelButton = confirmModal.querySelector('.btn-cancel');
+    cancelButton.onclick = function() {
+        confirmModal.style.display = 'none'; // Nascondi il modale
+    };
+}
+
 
 async function searchPlace() {
     const query = document.getElementById('mapSearchInput').value;
