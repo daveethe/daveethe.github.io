@@ -26,7 +26,6 @@ h1 {
     gap: 15px; /* Spazio tra le due icone */
     align-items: center;
     position: absolute;
-    top: 20px;
     right: 20px;
 }
 
@@ -394,6 +393,7 @@ h1 {
 h1 {
     text-align: center;
     margin-bottom: 20px;
+    padding: 10px 0px 0px 0px;
 }
 
 .form-group {
@@ -785,4 +785,12 @@ h1 {
 
 .icon-btn:hover {
     color: #007bff;
+}
+
+#sticky-part {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: white; /* Mantiene lo sfondo bianco mentre scorre il resto */
+    padding: 10px;
 }
