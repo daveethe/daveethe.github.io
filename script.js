@@ -91,16 +91,22 @@ async function fetchVacations() {
         if (!response.ok) {
             throw new Error('Errore nel recuperare le vacanze');
         }
+
         const vacations = await response.json();
 
-        // Ordina le vacanze per data di inizio
-        vacations.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+        // Aggiungi il controllo per assicurarti che vacations sia un array
+        if (Array.isArray(vacations)) {
+            // Ordina le vacanze per data di inizio
+            vacations.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
-        // Pulisce la lista corrente e visualizza tutte le vacanze
-        vacationList.innerHTML = '';
-        vacations.forEach(vacation => {
-            displayVacation(vacation);
-        });
+            // Pulisce la lista corrente e visualizza tutte le vacanze
+            vacationList.innerHTML = '';
+            vacations.forEach(vacation => {
+                displayVacation(vacation);
+            });
+        } else {
+            console.error('Vacations non è un array:', vacations);
+        }
     } catch (error) {
         console.error('Errore nel recuperare le vacanze:', error.message);
     }
@@ -142,21 +148,45 @@ function displayVacation(vacation) {
 
 // Funzione per eliminare una vacanza
 async function deleteVacation(id) {
-    try {
-        const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${id}`, {
-            method: 'DELETE',
-        });
+    // Usa il modale di conferma personalizzato
+    showConfirmModal(async () => {
+        try {
+            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${id}`, {
+                method: 'DELETE',
+            });
 
-        if (!response.ok) {
-            throw new Error('Errore nella cancellazione della vacanza');
+            if (!response.ok) {
+                throw new Error('Errore nella cancellazione della vacanza');
+            }
+
+            // Ricarica l'elenco delle vacanze dopo la cancellazione
+            location.reload();
+        } catch (error) {
+            console.error('Errore durante la cancellazione della vacanza:', error.message);
         }
-
-        // Ricarica l'elenco delle vacanze dopo la cancellazione
-        location.reload();
-    } catch (error) {
-        console.error('Errore durante la cancellazione della vacanza:', error.message);
-    }
+    });
 }
+
+
+// Funzione per confermare l'eliminazione
+function showConfirmModal(onConfirm) {
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.style.display = 'flex'; // Mostra il modale
+
+    // Quando l'utente conferma
+    const confirmButton = confirmModal.querySelector('.btn-confirm');
+    confirmButton.onclick = function() {
+        confirmModal.style.display = 'none'; // Nascondi il modale
+        onConfirm(); // Esegui la funzione passata come argomento
+    };
+
+    // Quando l'utente annulla
+    const cancelButton = confirmModal.querySelector('.btn-cancel');
+    cancelButton.onclick = function() {
+        confirmModal.style.display = 'none'; // Nascondi il modale
+    };
+}
+
 
 // Funzione per modificare una vacanza esistente
 async function editVacation(id) {
@@ -245,3 +275,48 @@ document.addEventListener('DOMContentLoaded', function() {
     calendar.render();
 
 });
+
+document.addEventListener('DOMContentLoaded', async function() {
+    // Recupera tutte le vacanze dal server
+    const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations');
+    const vacations = await response.json();
+
+    // Trova la prossima vacanza
+    const now = new Date();
+    const upcomingVacation = vacations
+        .filter(v => new Date(v.startDate) > now)
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))[0];
+
+    if (upcomingVacation) {
+        const countdownDate = new Date(upcomingVacation.startDate).getTime();
+
+        // Aggiorna il countdown ogni secondo
+        const interval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
+
+            if (distance < 0) {
+                clearInterval(interval);
+                document.getElementById("countdown").innerHTML = "Vacation Started!";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").textContent = String(days).padStart(2, '0');
+            document.getElementById("hours").textContent = String(hours).padStart(2, '0');
+            document.getElementById("minutes").textContent = String(minutes).padStart(2, '0');
+            document.getElementById("seconds").textContent = String(seconds).padStart(2, '0');
+        }, 1000);
+    }
+});
+
+// Funzione per il Logout
+document.getElementById('logoutButton').addEventListener('click', function() {
+    sessionStorage.removeItem('authenticated');  // Rimuovi lo stato di autenticazione
+    window.location.href = 'login.html';  // Reindirizza alla pagina di login
+});
+
