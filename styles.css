@@ -769,3 +769,31 @@ h1 {
     background-color: #e0e0e0;
     color: #333;
 }
+
+/* Login Password */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center; /* Allinea verticalmente l'icona */
+}
+
+.password-wrapper input {
+    flex: 1;
+    padding-right: 40px; /* Spazio sufficiente per l'icona */
+}
+
+.password-wrapper i {
+    position: absolute;
+    right: 10px;
+    top: 40%;  /* Posiziona l'icona a metà dell'altezza del contenitore */
+    transform: translateY(-50%);  /* Centra verticalmente l'icona */
+    cursor: pointer;
+    color: #777;
+    font-size: 12px; /* Riduci la dimensione dell'icona */
+    transition: color 0.3s ease;
+}
+
+.password-wrapper i:hover {
+    color: #000;
+}
+
