@@ -797,3 +797,22 @@ h1 {
     color: #000;
 }
 
+/* Stile per i pulsanti icona vacation_details */
+.icon-buttons-vacation-details {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.icon-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+.icon-btn:hover {
+    color: #007bff;
+}
