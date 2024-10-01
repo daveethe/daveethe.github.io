@@ -11,19 +11,20 @@
 </head>
 <body>
     <div class="container">
-        <div class="icon-buttons">
-            <i id="backButton" class="fas fa-arrow-left" title="Go Back" onclick="goBack()"></i> <!-- Nuovo pulsante indietro -->
-        </div>
-        <h1 id="vacationName"></h1>
+        <div id="sticky-part">
+            <div class="icon-buttons">
+                <i id="backButton" class="fas fa-arrow-left" title="Go Back" onclick="goBack()"></i> <!-- Nuovo pulsante indietro -->
+            </div>
+            <h1 id="vacationName"></h1>
 
-        <!-- Sezione per i pulsanti delle icone -->
-        <div class="icon-buttons-vacation-details">
-            <button id="addFlightBtn" class="icon-btn" title="Add Flight">✈️</button>
-            <button id="addHotelBtn" class="icon-btn" title="Add Hotel">🏨</button>
-            <!-- Icona per aprire la mappa -->
-            <button id="openMapBtn" class="icon-btn" title="View Map">🗺️</button>
+            <!-- Sezione per i pulsanti delle icone -->
+            <div class="icon-buttons-vacation-details">
+                <button id="addFlightBtn" class="icon-btn" title="Add Flight">✈️</button>
+                <button id="addHotelBtn" class="icon-btn" title="Add Hotel">🏨</button>
+                <!-- Icona per aprire la mappa -->
+                <button id="openMapBtn" class="icon-btn" title="View Map">🗺️</button>
+            </div>
         </div>
-
         <!-- Sezione per Voli -->
         <div id="flights" class="section">
             <h2>Flights</h2>
