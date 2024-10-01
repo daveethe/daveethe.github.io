@@ -249,28 +249,6 @@ h1 {
     opacity: 1;
 }
 
-/* Stile per il pulsante "Back to Home" in alto a destra con un'icona */
-.btn-back {
-    position: absolute; /* Permette il posizionamento assoluto rispetto al contenitore parent */
-    top: 47px;          /* Posiziona il pulsante a 20px dall'alto */
-    right: 20px;        /* Posiziona il pulsante a 20px dal lato destro */
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: flex; /* Usa flexbox per centrare l'icona */
-    align-items: center; /* Allinea verticalmente l'icona */
-    justify-content: center; /* Allinea orizzontalmente l'icona */
-    font-size: 12px; /* Dimensione del font per l'icona */
-}
-
-.btn-back:hover {
-    background-color: #0056b3;
-}
-
 /* Animazione di apertura del modale */
 @keyframes slide-down {
     from {
@@ -395,14 +373,6 @@ h1 {
     color: #007bff;
 }
 
-/* Stile per il pulsante "Back to Home" */
-.btn-back {
-    position: absolute;
-    right: 20px;
-    border: none;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
 
 .arrival-date {
     text-align: right;
@@ -809,7 +779,7 @@ h1 {
     background-color: transparent;
     border: none;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 24px;
     transition: color 0.3s ease;
 }
 
