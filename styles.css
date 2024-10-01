@@ -793,4 +793,5 @@ h1 {
     z-index: 1000;
     background-color: white; /* Mantiene lo sfondo bianco mentre scorre il resto */
     padding: 10px;
+    border-radius: 10px;
 }
