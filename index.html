@@ -8,6 +8,12 @@
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
     <link rel="stylesheet" href="styles.css">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
+        <script>
+        // Controlla se l'utente è autenticato
+        if (sessionStorage.getItem('authenticated') !== 'true') {
+            window.location.href = 'login.html'; // Reindirizza alla pagina di login
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -82,14 +88,6 @@
             <button class="btn-cancel">Annulla</button>
         </div>
     </div>
-
-
-    <script>
-        // Controlla se l'utente è autenticato
-        if (sessionStorage.getItem('authenticated') !== 'true') {
-            window.location.href = 'login.html'; // Reindirizza alla pagina di login
-        }
-    </script>
     
     <script src="script.js"></script>
 </body>
