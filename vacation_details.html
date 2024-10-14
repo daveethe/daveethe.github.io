@@ -6,23 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vacation Details</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />  
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        // Controlla se l'utente è autenticato
+        if (sessionStorage.getItem('authenticated') !== 'true') {
+            window.location.href = 'login.html'; // Reindirizza alla pagina di login
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <div id="sticky-part">
-            <div class="icon-buttons">
-                <i id="backButton" class="fas fa-arrow-left" title="Go Back" onclick="goBack()"></i> <!-- Nuovo pulsante indietro -->
+            <div class="backButton">
+                <i data-lucide="arrow-left" title="Go Back" onclick="goBack()"></i>
             </div>
+
             <h1 id="vacationName"></h1>
 
             <!-- Sezione per i pulsanti delle icone -->
             <div class="icon-buttons-vacation-details">
-                <button id="addFlightBtn" class="icon-btn" title="Add Flight">✈️</button>
-                <button id="addHotelBtn" class="icon-btn" title="Add Hotel">🏨</button>
-                <!-- Icona per aprire la mappa -->
-                <button id="openMapBtn" class="icon-btn" title="View Map">🗺️</button>
+                <button id="addFlightBtn" class="icon-btn" title="Add Flight"><i data-lucide="plane"></i></button>
+                <button id="addHotelBtn" class="icon-btn" title="Add Hotel"><i data-lucide="building"></i></button>
+                <button id="openMapBtn" class="icon-btn" title="View Map"><i data-lucide="map"></i></button>
+                <button id="expenseManagementBtn" class="icon-btn" title="Manage Expenses"><i data-lucide="dollar-sign"></i></button>
             </div>
         </div>
         <!-- Sezione per Voli -->
@@ -167,13 +174,13 @@
         </div>
     </div>
 
+    <!-- Inclusione di Lucide -->
     <script>
-        // Controlla se l'utente è autenticato
-        if (sessionStorage.getItem('authenticated') !== 'true') {
-            window.location.href = 'login.html'; // Reindirizza alla pagina di login
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
     </script>
-    
+
     <!-- Inclusione di Leaflet.js -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="details.js"></script>
