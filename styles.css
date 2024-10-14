@@ -21,21 +21,20 @@ h1 {
 }
 
 /* Stile per i pulsanti icona in alto */
-.icon-buttons {
+.icon-buttons-index {
     display: flex;
-    gap: 15px; /* Spazio tra le due icone */
+    gap: 5px; /* Spazio tra le due icone */
     align-items: center;
     position: absolute;
     right: 20px;
 }
 
-.icon-buttons i {
-    cursor: pointer;
+.icon-buttons-index i {
     color: #333;
     transition: color 0.3s ease;
 }
 
-.icon-buttons i:hover {
+.icon-buttons-index i:hover {
     color: #007bff; /* Cambia colore al passaggio del mouse */
 }
 
@@ -124,7 +123,7 @@ h1 {
 /* Contenuto del modale */
 .modal-content {
     background-color: #fefefe;
-    margin: 10% auto;
+    margin: 5% auto;
     padding: 20px;
     border-radius: 10px;
     width: 80%;
@@ -132,6 +131,7 @@ h1 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     position: relative;
     animation: slide-down 0.5s ease;
+    height: min-content;
 }
 
 /* Chiusura del modale */
@@ -154,12 +154,10 @@ h1 {
 }
 
 /* Formattazione dei campi del modulo */
-.form-group {
-    margin-bottom: 15px;
-}
+
 
 .form-group label {
-    display: block;
+    display: flex;
     margin-bottom: 5px;
     font-weight: bold;
     color: #333;
@@ -178,21 +176,6 @@ h1 {
 .form-group input:focus,
 .form-group textarea:focus {
     border-color: #007bff;
-}
-
-/* Stile del pulsante di salvataggio */
-.btn-save {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-save:hover {
-    background-color: #0056b3;
 }
 
 /* Stile per la sezione dei voli */
@@ -394,44 +377,6 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
     padding: 10px 0px 0px 0px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-}
-
-.form-group input {
-    width: calc(100% - 20px);
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    transition: border-color 0.2s ease;
-    margin-bottom: 10px;
-}
-
-.form-group input:focus {
-    border-color: #007bff;
-}
-
-.btn-save {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-save:hover {
-    background-color: #0056b3;
 }
 
 /* Stile per il div della mappa */
@@ -747,6 +692,16 @@ h1 {
     align-items: center; /* Allinea verticalmente l'icona */
 }
 
+.btn-login {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
 .password-wrapper input {
     flex: 1;
     padding-right: 40px; /* Spazio sufficiente per l'icona */
@@ -778,13 +733,32 @@ h1 {
     background-color: transparent;
     border: none;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 20px;
     transition: color 0.3s ease;
 }
 
 .icon-btn:hover {
     color: #007bff;
 }
+
+/* Stile per il pulsante goBack */
+.backButton {
+    position: absolute;
+    right: 20px; /* Sposta la freccia a destra */
+    top: 20px;   /* Regola l'altezza per allinearla alla parte superiore */
+    cursor: pointer; /* Assicurati che il cursore cambi in una manina al passaggio del mouse */
+}
+
+.backButton {
+    color: #333; /* Colore iniziale */
+    transition: color 0.3s ease; /* Aggiunge una transizione per il colore */
+}
+
+.backButton:hover {
+    color: #007bff; /* Cambia colore al passaggio del mouse */
+}
+
+
 
 #sticky-part {
     position: sticky;
@@ -794,3 +768,220 @@ h1 {
     padding: 10px;
     border-radius: 10px;
 }
+
+
+/* Stile generale per la pagina delle spese */
+.expense-container {
+    position: relative;
+    max-width: 600px;
+    margin: 2% auto;
+    background: #fefefe;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.expense-container h1 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Stile per i pulsanti di categoria */
+.category-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+}
+
+.category-buttons button {
+    display: flex;
+    align-items: flex-end;
+    margin: 0 5px;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #e5e7eb;
+    color: #333;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+
+.category-buttons button.selected {
+    background-color: #2d81db;  /* Colore blu quando selezionato */
+    color: white;
+}
+
+
+/* Stile del pulsante Aggiungi Spesa */
+.btn-add-expense {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2d81db;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.span-add-expense {
+    margin-left: 5px;
+}
+
+/* Stile del pulsante di salvataggio */
+.btn-save {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn-save i {
+    margin-right: 5px;  /* Spazio tra l'icona e il testo */
+}
+
+
+/* Stile per la visualizzazione delle spese */
+.expense-list {
+    margin-top: 20px;
+}
+
+.expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f3f4f6;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+
+.expense-item p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.expense-item .expense-amount {
+    font-size: 18px;
+    color: #161616;
+}
+
+.expense-row {
+    display: flex;
+    align-items: center; /* Allinea verticalmente icona e testo */
+}
+
+.riga_spesa i {
+    margin-right: 10px; /* Aggiungi uno spazio tra l'icona e il testo */
+}
+
+.expense-description {
+    margin-left: 10px; /* Eventuale ulteriore spaziatura tra l'icona e il testo */
+}
+
+
+/* Stile dei campi di input */
+
+
+.form-group input::placeholder {
+    color: #bbb;  /* Colore del placeholder più chiaro */
+}
+
+/* Stile per la sezione del Totale */
+.total-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #eaf4ff;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #007bff;
+    margin-top: 20px;
+}
+
+.total-container span {
+    font-size: 24px;
+}
+
+/* Animazione per l'aggiunta di una spesa (dissolvenza dal basso verso l'alto) */
+.fade-in-bottom {
+    animation: fadeInBottom 1s ease forwards;
+}
+
+@keyframes fadeInBottom {
+    0% {
+        opacity: 0;
+        transform: translateY(20px); /* Inizia dal basso */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* Termina nella posizione originale */
+    }
+}
+
+/* Animazione per l'eliminazione di una spesa (dissolvenza verso sinistra) */
+.fade-out-left {
+    animation: fadeOutLeft 1s ease forwards;
+}
+
+@keyframes fadeOutLeft {
+    0% {
+        opacity: 1;
+        transform: translateX(0); /* Posizione originale */
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%); /* Si sposta fuori dallo schermo verso sinistra */
+    }
+}
+
+[data-lucide] {
+    width: 18px;
+    height: 18px;
+}
+
+.icon_plane, .icon_hotel, .icon_car, .icon_shopping-cart, .icon_activity, .icon_list {
+    margin-right: 5px;
+}
+
+/* Stile del pulsante di eliminazione */
+.delete-expense {
+    padding: 4px;
+    background-color: #ef4444;  /* Rosso */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 5px;
+}
+  
+.delete-expense:hover {
+    background-color: #dc2626;  /* Rosso più scuro per l'hover */
+}
+  
+.delete-expense i {
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+
+.add-vacation-span {
+margin-left: 5px;
+}
+
+
