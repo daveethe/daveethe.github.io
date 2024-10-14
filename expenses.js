@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         try {
             const vacationId = new URLSearchParams(window.location.search).get('id');
-            const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/expenses`, {
+            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/expenses`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Funzione per caricare le spese esistenti dal backend
     async function loadExpenses() {
         try {
-            const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/expenses`);
+            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/expenses`);
             if (!response.ok) {
                 throw new Error('Errore nel caricamento delle spese');
             }
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     
         try {
-            const response = await fetch(`http://localhost:5002/api/vacations/${vacationId}/expenses/${expenseId}`, {
+            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/expenses/${expenseId}`, {
                 method: 'DELETE',
             });
     
