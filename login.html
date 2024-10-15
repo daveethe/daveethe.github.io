@@ -173,7 +173,7 @@
             const password = passwordField.value;
 
             try {
-                const response = await fetch('http://localhost:5002/api/vacations/verifyPassword', {
+                const response = await fetch('https://vacation-planner-backend.onrender.com/api/vacations/verifyPassword', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
