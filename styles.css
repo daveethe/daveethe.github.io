@@ -824,7 +824,6 @@ h1 {
         justify-content: space-evenly;
     }
 
-
     .category-buttons button {
         flex: 0 0 auto; /* Mantiene i bottoni sulla stessa riga */
         font-size: 12px; /* Riduce la dimensione del testo */
