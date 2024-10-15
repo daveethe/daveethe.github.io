@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.75">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spese Vacanza</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
@@ -15,30 +15,31 @@
 </head>
 <body>
     <div class="expense-container">
-        <div class="backButton">
-            <i data-lucide="arrow-left" title="Go Back" onclick="goBack()"></i>
-        </div>
-        <h1>Spese Vacanza</h1>
-        <form id="expenseForm">
-            <div class="form-group">
-                <input type="text" id="expenseDescription" placeholder="Descrizione" required>
+        <div id="sticky-part">
+            <div class="backButton">
+                <i data-lucide="arrow-left" title="Go Back" onclick="goBack()"></i>
             </div>
-            <div class="form-group">
+            <h1>Spese Vacanza</h1>
+            <form id="expenseForm">
                 <div class="form-group">
-                    <input type="number" id="expenseAmount" placeholder="Importo" step="0.01" required>
-                </div>                
-            </div>
-            <div class="category-buttons">
-                <button type="button" data-category="flight"><i data-lucide="plane" class="icon_plane"></i></i> Volo</button>
-                <button type="button" data-category="hotel"><i data-lucide="hotel" class="icon_hotel"></i> Hotel</button>
-                <button type="button" data-category="car"><i data-lucide="car" class="icon_car"></i> Noleggio</button>
-                <button type="button" data-category="groceries"><i data-lucide="shopping-cart" class="icon_shopping-cart"></i> Spesa</button>
-                <button type="button" data-category="activities"><i data-lucide="activity" class="icon_activity"></i> Attività</button>
-                <button type="button" data-category="other"><i data-lucide="list" class="icon_list"></i> Altro</button>
-            </div>
-            <button type="submit" class="btn-add-expense"><i data-lucide="plus-circle"></i><span class="span-add-expense">Aggiungi Spesa</span></button>
-        </form>
-
+                    <input type="text" id="expenseDescription" placeholder="Descrizione" required>
+                </div>
+                <div class="form-group">
+                    <div class="form-group">
+                        <input type="number" id="expenseAmount" placeholder="Importo" step="0.01" required>
+                    </div>                
+                </div>
+                <div class="category-buttons">
+                    <button type="button" data-category="flight"><i data-lucide="plane" class="icon_plane"></i></i> Volo</button>
+                    <button type="button" data-category="hotel"><i data-lucide="hotel" class="icon_hotel"></i> Hotel</button>
+                    <button type="button" data-category="car"><i data-lucide="car" class="icon_car"></i> Noleggio</button>
+                    <button type="button" data-category="groceries"><i data-lucide="shopping-cart" class="icon_shopping-cart"></i> Spesa</button>
+                    <button type="button" data-category="activities"><i data-lucide="activity" class="icon_activity"></i> Attività</button>
+                    <button type="button" data-category="other"><i data-lucide="list" class="icon_list"></i> Altro</button>
+                </div>
+                <button type="submit" class="btn-add-expense"><i data-lucide="plus-circle"></i><span class="span-add-expense">Aggiungi Spesa</span></button>
+            </form>
+        </div>
         <!-- Div per visualizzare le spese -->
         <div id="expenseList" class="expense-list"></div>
 
