@@ -814,6 +814,28 @@ h1 {
     color: white;
 }
 
+/* Stile per schermi più piccoli, ad esempio dispositivi mobili */
+@media (max-width: 600px) {
+    .category-buttons {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 10px 0;
+        gap: 5px; /* Riduce lo spazio tra i bottoni */
+    }
+
+    .category-buttons button {
+        flex: 0 0 auto; /* Mantiene i bottoni sulla stessa riga */
+        font-size: 12px; /* Riduce la dimensione del testo */
+        padding: 10px; /* Riduce il padding */
+        min-width: 70px; /* Riduce la larghezza minima del bottone */
+    }
+
+    .category-buttons i {
+        font-size: 14px; /* Riduce la dimensione delle icone */
+    }
+}
+
 
 /* Stile del pulsante Aggiungi Spesa */
 .btn-add-expense {
