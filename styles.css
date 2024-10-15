@@ -816,8 +816,10 @@ h1 {
 @media (max-width: 600px) {
     .category-buttons {
         display: flex;
+        overflow-x: auto;
         white-space: nowrap;
         padding: 10px 0;
+        gap: 5px; /* Riduce lo spazio tra i bottoni */
     }
 
     .category-buttons button {
