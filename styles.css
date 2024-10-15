@@ -814,16 +814,16 @@ h1 {
 
 /* Stile per schermi più piccoli, ad esempio dispositivi mobili */
 @media (max-width: 600px) {
-.category-buttons {
+    .category-buttons {
         display: flex;
         overflow-x: auto;
         white-space: nowrap;
         padding: 10px 0;
         gap: 10px 0px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: space-evenly;
-        align-content: center;
     }
+
 
     .category-buttons button {
         flex: 0 0 auto; /* Mantiene i bottoni sulla stessa riga */
