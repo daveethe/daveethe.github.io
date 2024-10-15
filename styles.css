@@ -245,9 +245,6 @@ h1 {
 
 /* Media Query per Responsività */
 @media (max-width: 600px) {
-    .modal-content {
-        width: 90%;
-    }
     
     #vacationList {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
