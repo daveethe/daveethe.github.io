@@ -70,13 +70,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('hotelForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const hotelId = document.getElementById('hotelId').value;
+    
         if (hotelId) {
-            await updateHotel(vacationId, hotelId);
+            // Aggiorna hotel esistente
+            await updateHotel(currentVacation._id, hotelId);
         } else {
-            await saveHotel(vacationId);
+            // Salva nuovo hotel
+            await saveHotel(currentVacation._id);
         }
+    
+        // Chiudi il modale dopo l'aggiornamento o l'aggiunta
         closeModal('hotelModal');
+    
+        // Aggiorna la lista degli hotel dopo l'operazione di salvataggio o aggiornamento
+        await refreshHotelsList();
     });
+    
+    async function refreshHotelsList() {
+        try {
+            // Recupera di nuovo i dettagli della vacanza dal server per aggiornare currentVacation
+            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${currentVacation._id}`);
+            if (!response.ok) {
+                throw new Error('Errore nel recuperare i dettagli aggiornati della vacanza');
+            }
+            
+            // Aggiorna currentVacation con i nuovi dati
+            currentVacation = await response.json();
+            
+            // Ricarica la lista degli hotel
+            loadHotels(currentVacation.hotels);
+        } catch (error) {
+            console.error('Errore durante il refresh degli hotel:', error.message);
+        }
+    }
+    
+        
 
     document.getElementById('itineraryForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -656,12 +684,16 @@ async function saveHotel(vacationId) {
         }
 
         const newHotel = await response.json();
-        loadHotels(currentVacation.hotels.concat(newHotel)); // Ricarica gli hotel con il nuovo
+
+        // Aggiorna currentVacation con l'hotel aggiunto
+        currentVacation.hotels.push(newHotel);
+        loadHotels(currentVacation.hotels); // Ricarica la lista degli hotel
+
+        return newHotel; // Restituisci l'hotel aggiunto
     } catch (err) {
         console.error(err.message);
     }
 }
-
 
 async function updateHotel(vacationId, hotelId) {
     const hotelData = {
@@ -684,11 +716,20 @@ async function updateHotel(vacationId, hotelId) {
         }
 
         const updatedHotel = await response.json();
-        loadHotels(currentVacation.hotels.map(hotel => hotel._id === updatedHotel._id ? updatedHotel : hotel)); // Aggiorna la lista degli hotel
+
+        // Aggiorna l'hotel in currentVacation
+        const hotelIndex = currentVacation.hotels.findIndex(hotel => hotel._id === updatedHotel._id);
+        if (hotelIndex > -1) {
+            currentVacation.hotels[hotelIndex] = updatedHotel;
+        }
+
+        loadHotels(currentVacation.hotels); // Ricarica la lista degli hotel con i dati aggiornati
+        return updatedHotel; // Restituisci l'hotel aggiornato
     } catch (err) {
         console.error(err.message);
     }
 }
+
 
 
 async function deleteHotel(vacationId, hotelId) {
