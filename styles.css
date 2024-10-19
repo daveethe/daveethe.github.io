@@ -1158,3 +1158,10 @@ margin-left: 5px;
         margin-bottom: 20px;
     }
 }
+
+.button-AddNewItem {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
