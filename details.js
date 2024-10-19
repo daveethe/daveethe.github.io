@@ -261,36 +261,51 @@ function openModal(modalId, mode, data = {}) {
         return;
     }
 
+    // Modalità aggiunta
     if (mode === 'add') {
         modalTitleElement.innerText = `Add ${modalId.split('Modal')[0]}`;
-        formElement.reset();
+        formElement.reset();  // Resetta il form per un nuovo inserimento
         document.getElementById(`${modalId.split('Modal')[0]}Id`).value = ''; // Clear hidden input for new data
-        
-        // Aggiungi qui le coordinate se disponibili
-        document.getElementById('lat').value = data.lat || ''; // Imposta le coordinate lat
-        document.getElementById('lng').value = data.lng || ''; // Imposta le coordinate lng
-    } else if (mode === 'edit') {
-        modalTitleElement.innerText = `Edit ${modalId.split('Modal')[0]}`;
-        Object.keys(data).forEach(key => {
-            if (document.getElementById(key)) {
-                document.getElementById(key).value = data[key];
-            }
-        });
-        document.getElementById(`${modalId.split('Modal')[0]}Id`).value = data._id; // Set hidden input for editing
-    } else if (mode === 'viewMap') { // Aggiunto per la mappa
-        initializeMap(); // Inizializza la mappa
+
+        // Resetta anche le coordinate per la mappa (se ci sono)
+        if (document.getElementById('lat')) document.getElementById('lat').value = data.lat || '';
+        if (document.getElementById('lng')) document.getElementById('lng').value = data.lng || '';
     }
 
+    // Modalità modifica
+    else if (mode === 'edit') {
+        modalTitleElement.innerText = `Edit ${modalId.split('Modal')[0]}`;
+
+        // Precompila i campi con i dati esistenti
+        Object.keys(data).forEach(key => {
+            const inputElement = document.getElementById(key);
+            if (inputElement) {
+                inputElement.value = data[key] || '';  // Popola con il valore, oppure vuoto se non esiste
+            }
+        });
+
+        // Imposta l'ID nascosto per l'elemento da modificare
+        document.getElementById(`${modalId.split('Modal')[0]}Id`).value = data._id || ''; 
+    }
+
+    // Modalità visualizzazione mappa
+    else if (mode === 'viewMap') {
+        initializeMap();  // Inizializza la mappa
+    }
+
+    // Mostra il modale
     document.getElementById(modalId).style.display = 'block';
 
+    // Gestisce le dimensioni corrette della mappa se è la mappa
     if (modalId === 'mapModal') {
         setTimeout(() => {
             if (map) {
-                map.invalidateSize(); // Assicura che le dimensioni della mappa siano corrette dopo il rendering
+                map.invalidateSize();  // Assicura il ridimensionamento corretto
             }
-        }, 100); // Breve ritardo per garantire che il rendering sia completato
+        }, 100);  // Breve ritardo per garantire che il rendering sia completato
     }
 }
+
 
 function updateDaySelector(newDate) {
     const daySelector = document.getElementById('daySelector');
@@ -478,11 +493,19 @@ function editFlight(flightId) {
 
 
 function editHotel(hotelId) {
-    const hotel = currentVacation.hotels.find(h => h._id === hotelId);
+    // Trova l'hotel nella lista delle vacanze
+    const hotel = currentVacation.hotels.find(hotel => hotel._id === hotelId);
+
     if (hotel) {
-        openModal('hotelModal', 'edit', hotel);
-    } else {
-        console.error('Hotel not found.');
+        // Apri il modale per modificare l'hotel e passa i dati da precompilare
+        openModal('hotelModal', 'edit', {
+            _id: hotel._id,
+            hotelName: hotel.name,
+            address: hotel.address,
+            bookingLink: hotel.bookingLink,
+            checkInDate: hotel.checkInDate.split('T')[0],  // Formatta in formato `YYYY-MM-DD`
+            checkOutDate: hotel.checkOutDate.split('T')[0]  // Formatta in formato `YYYY-MM-DD`
+        });
     }
 }
 
