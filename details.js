@@ -469,6 +469,16 @@ function editItinerary(itineraryId) {
 
 
 async function saveFlight(vacationId) {
+
+    // Ottieni l'orario inserito dall'utente e convertilo in UTC
+    const departureTime = new Date(document.getElementById('departureTime').value);
+    const arrivalTime = new Date(document.getElementById('arrivalTime').value);
+
+    // Converte in formato UTC ISO string
+    const departureTimeUTC = departureTime.toISOString();
+    const arrivalTimeUTC = arrivalTime.toISOString();
+
+    
     const flightData = {
         airline: document.getElementById('airline').value,
         flightNumber: document.getElementById('flightNumber').value,
