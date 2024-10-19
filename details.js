@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Gestori di eventi per il submit dei moduli
     document.getElementById('flightForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-                
+
         const flightId = document.getElementById('flightId').value;
         if (flightId) {
             await updateFlight(vacationId, flightId);
@@ -126,6 +126,11 @@ function loadFlights(flights) {
         const flightItem = document.createElement('div');
         flightItem.className = 'flight-item';
 
+        // Converti gli orari in formato locale
+        const departureTimeLocal = new Date(flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const arrivalTimeLocal = new Date(flight.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const arrivalDateLocal = new Date(flight.arrivalTime).toLocaleDateString();
+
         // Template aggiornato per il layout dei voli
         flightItem.innerHTML = `
             <div class="flight-header">
@@ -133,7 +138,7 @@ function loadFlights(flights) {
                 <span><strong>To:</strong> ${flight.arrivalAirport || 'N/A'}</span>
             </div>
             <div class="flight-content">
-                <div class="flight-time">${new Date(flight.departureTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                <div class="flight-time">${departureTimeLocal}</div>
                 <div class="flight-info">
                     <p><strong>${flight.airline}</strong></p>
                     <p>${flight.flightNumber}</p>
@@ -141,11 +146,11 @@ function loadFlights(flights) {
                 <div class="flight-duration">
                     <span>${calculateDuration(flight.departureTime, flight.arrivalTime)}</span>
                 </div>
-                <div class="flight-time">${new Date(flight.arrivalTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                <div class="flight-time">${arrivalTimeLocal}</div>
             </div>
             <div class="flight-footer">
                 <div class="arrival-date">
-                    <span>${new Date(flight.arrivalTime).toLocaleDateString()}</span>
+                    <span>${arrivalDateLocal}</span>
                 </div>
                 <div class="actions">
                     <button onclick="editFlight('${flight._id}')">✏️</button>
@@ -156,6 +161,7 @@ function loadFlights(flights) {
         flightList.appendChild(flightItem);
     });
 }
+
 
 function calculateDuration(departureTime, arrivalTime) {
     const departure = new Date(departureTime);
@@ -173,6 +179,14 @@ function loadHotels(hotels) {
     hotels.forEach(hotel => {
         const hotelItem = document.createElement('div');
         hotelItem.className = 'hotel-item';
+
+        const bookingLinkIcon = hotel.bookingLink ? `
+            <a href="${hotel.bookingLink}" target="_blank" class="hotel-link-icon" title="Go to booking site">
+                <div class="hotel-link-div">
+                    <i data-lucide="external-link"></i>
+                </div>
+            </a>` : '';
+
         hotelItem.innerHTML = `
             <div class="hotel-content">
                 <div class="hotel-info">
@@ -186,12 +200,18 @@ function loadHotels(hotels) {
                 <div class="actions">
                     <button onclick="editHotel('${hotel._id}')">✏️</button>
                     <button onclick="deleteHotel('${currentVacation._id}', '${hotel._id}')">🗑️</button>
+                    ${bookingLinkIcon} <!-- Aggiungi l'icona se c'è il link -->
                 </div>
             </div>
         `;
+
         hotelList.appendChild(hotelItem);
     });
+
+    // Inizializza le icone Lucide dopo aver aggiunto gli hotel
+    lucide.createIcons();
 }
+
 
 function loadItinerary(itinerary) {
     const itineraryList = document.getElementById('itineraryList');
@@ -439,11 +459,23 @@ async function getCoordinates(address) {
 function editFlight(flightId) {
     const flight = currentVacation.flights.find(f => f._id === flightId);
     if (flight) {
+        // Converti gli orari da UTC a locale per mostrarli nel form
+        const departureTimeLocal = new Date(flight.departureTime).toISOString().slice(0, 16);  // Formato per <input type="datetime-local">
+        const arrivalTimeLocal = new Date(flight.arrivalTime).toISOString().slice(0, 16);      // Formato per <input type="datetime-local">
+
+        document.getElementById('airline').value = flight.airline;
+        document.getElementById('flightNumber').value = flight.flightNumber;
+        document.getElementById('departureAirport').value = flight.departureAirport;
+        document.getElementById('arrivalAirport').value = flight.arrivalAirport;
+        document.getElementById('departureTime').value = departureTimeLocal;  // Ora locale
+        document.getElementById('arrivalTime').value = arrivalTimeLocal;      // Ora locale
+
         openModal('flightModal', 'edit', flight);
     } else {
         console.error('Flight not found.');
     }
 }
+
 
 function editHotel(hotelId) {
     const hotel = currentVacation.hotels.find(h => h._id === hotelId);
@@ -469,7 +501,6 @@ function editItinerary(itineraryId) {
 
 
 async function saveFlight(vacationId) {
-
     // Ottieni l'orario inserito dall'utente e convertilo in UTC
     const departureTime = new Date(document.getElementById('departureTime').value);
     const arrivalTime = new Date(document.getElementById('arrivalTime').value);
@@ -478,17 +509,14 @@ async function saveFlight(vacationId) {
     const departureTimeUTC = departureTime.toISOString();
     const arrivalTimeUTC = arrivalTime.toISOString();
 
-    
     const flightData = {
         airline: document.getElementById('airline').value,
         flightNumber: document.getElementById('flightNumber').value,
         departureAirport: document.getElementById('departureAirport').value.trim(),
         arrivalAirport: document.getElementById('arrivalAirport').value.trim(),
-        departureTime: document.getElementById('departureTime').value,
-        arrivalTime: document.getElementById('arrivalTime').value
+        departureTime: departureTimeUTC,  // Ora in UTC
+        arrivalTime: arrivalTimeUTC       // Ora in UTC
     };
-
-    console.log('Saving flight with data:', flightData);  // Debugging
 
     try {
         const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights`, {
@@ -511,17 +539,24 @@ async function saveFlight(vacationId) {
     }
 }
 
+
 async function updateFlight(vacationId, flightId) {
+    // Ottieni l'orario inserito dall'utente e convertilo in UTC
+    const departureTime = new Date(document.getElementById('departureTime').value);
+    const arrivalTime = new Date(document.getElementById('arrivalTime').value);
+
+    // Converte in formato UTC ISO string
+    const departureTimeUTC = departureTime.toISOString();
+    const arrivalTimeUTC = arrivalTime.toISOString();
+
     const flightData = {
         airline: document.getElementById('airline').value,
         flightNumber: document.getElementById('flightNumber').value,
         departureAirport: document.getElementById('departureAirport').value.trim(),
         arrivalAirport: document.getElementById('arrivalAirport').value.trim(),
-        departureTime: document.getElementById('departureTime').value,
-        arrivalTime: document.getElementById('arrivalTime').value
+        departureTime: departureTimeUTC,  // Ora in UTC
+        arrivalTime: arrivalTimeUTC       // Ora in UTC
     };
-
-    console.log('Updating flight with data:', flightData);  // Debugging
 
     try {
         const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/flights/${flightId}`, {
@@ -543,6 +578,7 @@ async function updateFlight(vacationId, flightId) {
         console.error('Errore nell\'aggiornamento del volo:', error.message);
     }
 }
+
 
 async function deleteFlight(vacationId, flightId) {
     showConfirmModal(async () => {
@@ -571,15 +607,14 @@ async function saveHotel(vacationId) {
         name: document.getElementById('hotelName').value,
         address: document.getElementById('address').value,
         checkInDate: document.getElementById('checkInDate').value,
-        checkOutDate: document.getElementById('checkOutDate').value
+        checkOutDate: document.getElementById('checkOutDate').value,
+        bookingLink: document.getElementById('bookingLink').value // Assicurati di includere questo campo
     };
 
     try {
         const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(hotelData),
         });
 
@@ -587,28 +622,27 @@ async function saveHotel(vacationId) {
             throw new Error('Errore durante il salvataggio dell\'hotel');
         }
 
-        const updatedVacation = await response.json();
-        currentVacation = updatedVacation; // Aggiorna currentVacation con i dati aggiornati
-        loadHotels(updatedVacation.hotels);
-    } catch (error) {
-        console.error('Errore nel salvataggio dell\'hotel:', error.message);
+        const newHotel = await response.json();
+        loadHotels(currentVacation.hotels.concat(newHotel)); // Ricarica gli hotel con il nuovo
+    } catch (err) {
+        console.error(err.message);
     }
 }
+
 
 async function updateHotel(vacationId, hotelId) {
     const hotelData = {
         name: document.getElementById('hotelName').value,
         address: document.getElementById('address').value,
         checkInDate: document.getElementById('checkInDate').value,
-        checkOutDate: document.getElementById('checkOutDate').value
+        checkOutDate: document.getElementById('checkOutDate').value,
+        bookingLink: document.getElementById('bookingLink').value // Aggiungi il link facoltativo
     };
 
     try {
         const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/hotels/${hotelId}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(hotelData),
         });
 
@@ -616,13 +650,13 @@ async function updateHotel(vacationId, hotelId) {
             throw new Error('Errore durante l\'aggiornamento dell\'hotel');
         }
 
-        const updatedVacation = await response.json();
-        currentVacation = updatedVacation; // Aggiorna currentVacation con i dati aggiornati
-        loadHotels(updatedVacation.hotels);
-    } catch (error) {
-        console.error('Errore nell\'aggiornamento dell\'hotel:', error.message);
+        const updatedHotel = await response.json();
+        loadHotels(currentVacation.hotels.map(hotel => hotel._id === updatedHotel._id ? updatedHotel : hotel)); // Aggiorna la lista degli hotel
+    } catch (err) {
+        console.error(err.message);
     }
 }
+
 
 async function deleteHotel(vacationId, hotelId) {
     showConfirmModal(async () => {
