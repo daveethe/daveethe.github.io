@@ -28,11 +28,6 @@ body {
     }
 }
 
-
-h1 {
-    text-align: center;
-}
-
 /* Stile per i pulsanti icona in alto */
 .icon-buttons-logout {
     position: absolute;
@@ -47,7 +42,7 @@ h1 {
     gap: 5px;
     align-items: center;
     justify-content: center;
-    padding: 20px 0px 0px;
+    padding: 10px 0px 0px;
 }
 
 .icon-buttons-index i {
@@ -395,6 +390,7 @@ h1 {
     padding: 10px 0px 0px 0px;
 }
 
+
 /* Stile per il div della mappa */
 #map {
     width: 100%;  /* Assicura che la mappa prenda tutta la larghezza */
@@ -527,6 +523,7 @@ h1 {
     display: flex;
     justify-content: center;
     gap: 20px; /* Spazio tra i blocchi */
+    margin-top: 100px;
 }
 
 .countdown-container {
@@ -1066,3 +1063,98 @@ h1 {
 margin-left: 5px;
 }
 
+.vacation-details-heading {
+    font-family: 'Allura', cursive;
+    font-size: 6rem;
+    color: rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    white-space: nowrap;
+}
+
+.expenses-heading {
+    font-family: 'Allura', cursive;
+    font-size: 6rem;
+    color: rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    white-space: nowrap;
+}
+
+.vacationNameTitle {
+    font-family: 'Allura', cursive;
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.vacationPlanner {
+    color: rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    white-space: nowrap;
+    font-family: 'Allura', cursive;
+    font-size: 7rem;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .vacationPlanner {
+        color: rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        white-space: nowrap;
+        font-family: 'Allura', cursive;
+        font-size: 5rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .vacation-details-heading {
+        font-family: 'Allura', cursive;
+        font-size: 4.7rem;
+        color: rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 600px) {
+    .expenses-heading {
+        font-family: 'Allura', cursive;
+        font-size: 4.7rem;
+        color: rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 17%;
+        left: 47%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 600px) {
+    .vacationNameTitle {
+        font-family: 'Allura', cursive;
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+}
