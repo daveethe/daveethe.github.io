@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.75">
     <title>Vacation Details</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <script>
@@ -22,8 +23,8 @@
                 <i data-lucide="arrow-left" title="Go Back" onclick="goBack()"></i>
             </div>
 
-            <h1 id="vacationName"></h1>
-
+            <div id="vacationName" class="vacationNameTitle"></div>
+            <div class="vacation-details-heading">Vacation Details</div>
             <!-- Sezione per i pulsanti delle icone -->
             <div class="icon-buttons-vacation-details">
                 <button id="addFlightBtn" class="icon-btn" title="Add Flight"><i data-lucide="plane"></i></button>
