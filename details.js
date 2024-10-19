@@ -473,23 +473,27 @@ async function getCoordinates(address) {
 
 function editFlight(flightId) {
     const flight = currentVacation.flights.find(f => f._id === flightId);
+    
     if (flight) {
-        // Converti gli orari da UTC a locale per mostrarli nel form
-        const departureTimeLocal = new Date(flight.departureTime).toISOString().slice(0, 16);  // Formato per <input type="datetime-local">
-        const arrivalTimeLocal = new Date(flight.arrivalTime).toISOString().slice(0, 16);      // Formato per <input type="datetime-local">
+        // Converti gli orari da UTC a locale per mostrarli nel form in formato "datetime-local"
+        const departureTimeLocal = new Date(flight.departureTime).toISOString().slice(0, 16);  // Formato compatibile con input datetime-local
+        const arrivalTimeLocal = new Date(flight.arrivalTime).toISOString().slice(0, 16);      // Formato compatibile con input datetime-local
 
-        document.getElementById('airline').value = flight.airline;
-        document.getElementById('flightNumber').value = flight.flightNumber;
-        document.getElementById('departureAirport').value = flight.departureAirport;
-        document.getElementById('arrivalAirport').value = flight.arrivalAirport;
-        document.getElementById('departureTime').value = departureTimeLocal;  // Ora locale
-        document.getElementById('arrivalTime').value = arrivalTimeLocal;      // Ora locale
-
-        openModal('flightModal', 'edit', flight);
+        // Usa openModal per precompilare i campi del form con i dati del volo
+        openModal('flightModal', 'edit', {
+            _id: flight._id,
+            airline: flight.airline,
+            flightNumber: flight.flightNumber,
+            departureAirport: flight.departureAirport,
+            arrivalAirport: flight.arrivalAirport,
+            departureTime: departureTimeLocal,  // Precompila con l'orario locale formattato
+            arrivalTime: arrivalTimeLocal       // Precompila con l'orario locale formattato
+        });
     } else {
         console.error('Flight not found.');
     }
 }
+
 
 
 function editHotel(hotelId) {
@@ -511,16 +515,22 @@ function editHotel(hotelId) {
 
 function editItinerary(itineraryId) {
     const itinerary = currentVacation.itinerary.find(i => i._id === itineraryId);
+
     if (itinerary) {
-        openModal('itineraryModal', 'edit', itinerary);
-        // Aggiungi questo per popolare il campo time
-        if (itinerary.time) {
-            document.getElementById('itineraryTime').value = itinerary.time;
-        }
+        // Usa openModal per precompilare i campi del form con i dati dell'itinerario
+        openModal('itineraryModal', 'edit', {
+            _id: itinerary._id,
+            date: itinerary.date.split('T')[0],  // Formatta in formato `YYYY-MM-DD`
+            time: itinerary.time || '',          // Precompila il tempo, se disponibile
+            activities: itinerary.activities.join(', '),  // Unisci le attività in una stringa
+            lat: itinerary.coordinates ? itinerary.coordinates.lat : '',  // Precompila latitudine
+            lng: itinerary.coordinates ? itinerary.coordinates.lng : ''   // Precompila longitudine
+        });
     } else {
         console.error('Itinerary not found.');
     }
 }
+
 
 
 async function saveFlight(vacationId) {
