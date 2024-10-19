@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.75">
     <title>Spese Vacanza</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <script>
         // Controlla se l'utente è autenticato
@@ -19,7 +20,10 @@
             <div class="backButton">
                 <i data-lucide="arrow-left" title="Go Back" onclick="goBack()"></i>
             </div>
-            <h1>Spese Vacanza</h1>
+
+            <div id="vacationName" class="vacationNameTitle"></div>
+            <div class="expenses-heading">Expenses</div>
+
             <form id="expenseForm">
                 <div class="form-group">
                     <input type="text" id="expenseDescription" placeholder="Descrizione" required>
