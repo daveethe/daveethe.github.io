@@ -1,9 +1,30 @@
 document.addEventListener('DOMContentLoaded', function() {
     const expenseForm = document.getElementById('expenseForm');
     const expenseList = document.getElementById('expenseList');
+    const vacationNameElement = document.getElementById('vacationName'); // Elemento per il nome della vacanza
     const categoryButtons = document.querySelectorAll('.category-buttons button');
     let selectedCategory = '';
     const vacationId = new URLSearchParams(window.location.search).get('id'); // Ottieni l'ID della vacanza dall'URL
+
+    if (vacationId) {
+        // Carica il nome della vacanza
+        fetchVacationName(vacationId);
+    }
+
+    // Funzione per caricare il nome della vacanza
+    async function fetchVacationName(vacationId) {
+        try {
+            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}`);
+            if (!response.ok) {
+                throw new Error('Errore nel caricamento del nome della vacanza');
+            }
+            const vacationData = await response.json();
+            vacationNameElement.textContent = vacationData.name;  // Imposta il nome della vacanza nell'elemento h1
+        } catch (error) {
+            console.error('Errore nel caricamento del nome della vacanza:', error.message);
+            vacationNameElement.textContent = 'Errore nel caricamento del nome della vacanza';
+        }
+    }
 
     // Carica le spese esistenti all'avvio della pagina
     loadExpenses();
@@ -20,21 +41,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Funzione per gestire l'invio del modulo
     expenseForm.addEventListener('submit', async function(event) {
         event.preventDefault();
-    
+
         const expenseData = {
             description: document.getElementById('expenseDescription').value,
             amount: parseFloat(document.getElementById('expenseAmount').value).toFixed(2),
             category: selectedCategory
         };
-    
+
         // Verifica che una categoria sia selezionata
         if (!selectedCategory) {
             alert('Seleziona una categoria per la spesa.');
             return;
         }
-    
+
         try {
-            const vacationId = new URLSearchParams(window.location.search).get('id');
             const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/expenses`, {
                 method: 'POST',
                 headers: {
@@ -42,21 +62,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(expenseData),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Errore durante l\'aggiunta della spesa');
             }
-    
+
             const newExpense = await response.json();
             displayExpense(newExpense);  // Assicurati che il nuovo ID sia usato in displayExpense
-    
+
             expenseForm.reset();  // Resetta il modulo dopo l'invio
             selectedCategory = '';  // Resetta la categoria selezionata
-    
+
         } catch (error) {
             console.error('Errore nel salvataggio della spesa:', error.message);
         }
-    });    
+    });
 
     // Funzione per caricare le spese esistenti dal backend
     async function loadExpenses() {
@@ -74,10 +94,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funzione per eliminare le spese esistenti dal backend
     async function deleteExpense(expenseId, expenseElement, amount) {
-        // Mostra il modale di conferma personalizzato
         showConfirmModal(async () => {
             try {
-                const vacationId = new URLSearchParams(window.location.search).get('id');
                 const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/expenses/${expenseId}`, {
                     method: 'DELETE',
                 });
@@ -86,13 +104,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error('Errore durante l\'eliminazione della spesa');
                 }
 
-                // Aggiungi l'animazione di dissolvenza prima di rimuovere l'elemento
                 expenseElement.classList.add('fade-out-left');
 
                 setTimeout(() => {
                     expenseElement.remove();
-
-                    // Aggiorna il totale sottraendo l'importo della spesa eliminata
                     totalAmount -= parseFloat(amount);
                     document.getElementById('totalAmount').textContent = `€ ${totalAmount.toFixed(2)}`;
                 }, 1000);
@@ -106,23 +121,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Funzione per mostrare il popup di conferma
     function showConfirmModal(onConfirm) {
         const confirmModal = document.getElementById('confirmModal');
-        confirmModal.style.display = 'flex'; // Mostra il modale
+        confirmModal.style.display = 'flex';
 
-        // Quando l'utente conferma
         const confirmButton = confirmModal.querySelector('.btn-confirm');
         confirmButton.onclick = function() {
-            confirmModal.style.display = 'none'; // Nascondi il modale
-            onConfirm(); // Esegui la funzione di conferma
+            confirmModal.style.display = 'none';
+            onConfirm();
         };
 
-        // Quando l'utente annulla
         const cancelButton = confirmModal.querySelector('.btn-cancel');
         cancelButton.onclick = function() {
-            confirmModal.style.display = 'none'; // Nascondi il modale
+            confirmModal.style.display = 'none';
         };
     }
-    
-    
 
     // Funzione per visualizzare una singola spesa
     let totalAmount = 0;
@@ -140,8 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'activities': icon = '<i data-lucide="activity"></i>'; break;
             case 'other': icon = '<i data-lucide="list"></i>';
         }
-    
-    
+
         expenseElement.innerHTML = `
         <div>
             <div class="expense-row">${icon} <span class="expense-description">${expense.description}</span></div> 
@@ -151,22 +161,17 @@ document.addEventListener('DOMContentLoaded', function() {
             <button class="delete-expense" data-id="${expense._id}"><i data-lucide="trash-2"></i></button>
         </div>
         `;
-    
-        // Aggiungi la nuova spesa con un'animazione di dissolvenza dal basso verso l'alto
-        expenseElement.classList.add('fade-in-bottom'); // Aggiungi la classe di animazione
-    
+
+        expenseElement.classList.add('fade-in-bottom');
         expenseList.appendChild(expenseElement);
-    
-        // Rimuovi l'animazione dopo che è stata completata per evitare interferenze future
+
         setTimeout(() => {
             expenseElement.classList.remove('fade-in-bottom');
-        }, 1000); // Tempo corrispondente alla durata dell'animazione in CSS
-    
-        // Aggiorna il totale aggiungendo l'importo della nuova spesa
+        }, 1000);
+
         totalAmount += parseFloat(expense.amount);
-        document.getElementById('totalAmount').innerHTML = `<i data-lucide="euro"></i> ${totalAmount.toFixed(2)}`;        
-    
-        // Gestione del click per eliminare la spesa
+        document.getElementById('totalAmount').innerHTML = `<i data-lucide="euro"></i> ${totalAmount.toFixed(2)}`;
+
         expenseElement.querySelector('.delete-expense').addEventListener('click', function() {
             deleteExpense(expense._id, expenseElement, expense.amount);
         });
@@ -176,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-
 function goBack() {
-    window.history.back();  // Torna alla pagina precedente
+    window.history.back();
 }
