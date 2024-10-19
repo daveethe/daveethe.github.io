@@ -57,6 +57,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Gestori di eventi per il submit dei moduli
     document.getElementById('flightForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // Ottieni l'orario inserito dall'utente
+        const departureTime = new Date(document.getElementById('departureTime').value);
+        const arrivalTime = new Date(document.getElementById('arrivalTime').value);
+
+        // Converti l'orario in UTC
+        const departureTimeUTC = departureTime.toISOString(); // Converte in formato UTC ISO string
+        const arrivalTimeUTC = arrivalTime.toISOString();
+        
         const flightId = document.getElementById('flightId').value;
         if (flightId) {
             await updateFlight(vacationId, flightId);
