@@ -74,37 +74,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funzione per eliminare le spese esistenti dal backend
     async function deleteExpense(expenseId, expenseElement, amount) {
-        const vacationId = new URLSearchParams(window.location.search).get('id');
-    
-        if (!confirm('Sei sicuro di voler eliminare questa spesa?')) {
-            return;
-        }
-    
-        try {
-            const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/expenses/${expenseId}`, {
-                method: 'DELETE',
-            });
-    
-            if (!response.ok) {
-                throw new Error('Errore durante l\'eliminazione della spesa');
+        // Mostra il modale di conferma personalizzato
+        showConfirmModal(async () => {
+            try {
+                const vacationId = new URLSearchParams(window.location.search).get('id');
+                const response = await fetch(`https://vacation-planner-backend.onrender.com/api/vacations/${vacationId}/expenses/${expenseId}`, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Errore durante l\'eliminazione della spesa');
+                }
+
+                // Aggiungi l'animazione di dissolvenza prima di rimuovere l'elemento
+                expenseElement.classList.add('fade-out-left');
+
+                setTimeout(() => {
+                    expenseElement.remove();
+
+                    // Aggiorna il totale sottraendo l'importo della spesa eliminata
+                    totalAmount -= parseFloat(amount);
+                    document.getElementById('totalAmount').textContent = `€ ${totalAmount.toFixed(2)}`;
+                }, 1000);
+
+            } catch (error) {
+                console.error('Errore durante l\'eliminazione della spesa:', error.message);
             }
+        });
+    }
+
+    // Funzione per mostrare il popup di conferma
+    function showConfirmModal(onConfirm) {
+        const confirmModal = document.getElementById('confirmModal');
+        confirmModal.style.display = 'flex'; // Mostra il modale
+
+        // Quando l'utente conferma
+        const confirmButton = confirmModal.querySelector('.btn-confirm');
+        confirmButton.onclick = function() {
+            confirmModal.style.display = 'none'; // Nascondi il modale
+            onConfirm(); // Esegui la funzione di conferma
+        };
+
+        // Quando l'utente annulla
+        const cancelButton = confirmModal.querySelector('.btn-cancel');
+        cancelButton.onclick = function() {
+            confirmModal.style.display = 'none'; // Nascondi il modale
+        };
+    }
     
-            // Aggiungi l'animazione di dissolvenza verso sinistra prima di rimuovere l'elemento
-            expenseElement.classList.add('fade-out-left'); // Aggiungi la classe di animazione
-    
-            setTimeout(() => {
-                // Rimuovi l'elemento dal DOM solo dopo che l'animazione è terminata
-                expenseElement.remove();
-    
-                // Aggiorna il totale sottraendo l'importo della spesa eliminata
-                totalAmount -= parseFloat(amount);
-                document.getElementById('totalAmount').textContent = `€ ${totalAmount.toFixed(2)}`;
-            }, 1000); // Attendi che l'animazione finisca (1 secondo)
-    
-        } catch (error) {
-            console.error('Errore durante l\'eliminazione della spesa:', error.message);
-        }
-    }      
     
 
     // Funzione per visualizzare una singola spesa
