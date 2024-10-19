@@ -124,6 +124,10 @@
                     <input type="text" id="address" name="address" required>
                 </div>
                 <div class="form-group">
+                    <label for="bookingLink">Booking Link (optional):</label>
+                    <input type="url" id="bookingLink" name="bookingLink" placeholder="https://">
+                </div>
+                <div class="form-group">
                     <label for="checkInDate">Check-in Date:</label>
                     <input type="date" id="checkInDate" name="checkInDate" required>
                 </div>
@@ -180,7 +184,6 @@
             lucide.createIcons();
         });
     </script>
-
     <!-- Inclusione di Leaflet.js -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="details.js"></script>
