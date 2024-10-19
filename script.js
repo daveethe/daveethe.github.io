@@ -319,4 +319,3 @@ document.getElementById('logoutButton').addEventListener('click', function() {
     sessionStorage.removeItem('authenticated');  // Rimuovi lo stato di autenticazione
     window.location.href = 'login.html';  // Reindirizza alla pagina di login
 });
-
